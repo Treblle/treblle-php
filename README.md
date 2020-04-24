@@ -22,7 +22,7 @@ require_once('vendor/autoload.php');
 The first thing you need to do is create a FREE account on <https://treblle.com> to get an API key and Project ID. After that all you need to do is add the following line of code to your PHP API project: 
 
 ```php
-$treblle = new Treblle\Bass('YOUR_API_KEY', 'YOUR_PROJECT_ID');
+$treblle = new Treblle\Treblle('YOUR_API_KEY', 'YOUR_PROJECT_ID');
 ```
 That's it. Your API requests and responses are now being sent to your Treblle project. Just by adding that line of code you get features like: auto-documentation, real-time request/response monitoring, error tracking and so much more.
 
@@ -31,7 +31,7 @@ Treblle will catch everything that is sent to your API endpoints as well as ever
 The fourth parameter is an `$options` array. The additional options are:
 
 ```php
-$treblle = new Treblle\Bass('YOUR_API_KEY', 'YOUR_PROJECT_ID');
+$treblle = new Treblle\Treblle('YOUR_API_KEY', 'YOUR_PROJECT_ID');
 $treblle->addMeta('pricing', array('price_per_item' => 100, 'number_of_items' => '2', 'total' => 200));
 ```
 
