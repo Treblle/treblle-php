@@ -28,7 +28,6 @@ That's it. Your API requests and responses are now being sent to your Treblle pr
 
 Treblle will catch everything that is sent to your API endpoints as well as everything that the endpoints return. In case you wish to add even more information to track specific things in your API but NOT return them in the response you can call add meta information to a specific API endpoint or all endpoints. To do so you can do the following:
 
-The fourth parameter is an `$options` array. The additional options are:
 
 ```php
 $treblle = new Treblle\Treblle('YOUR_API_KEY', 'YOUR_PROJECT_ID');
