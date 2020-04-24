@@ -2,7 +2,7 @@
 
 namespace Treblle;
 
-class Bass {
+class Treblle {
     
     /**
      * Get your Treblle API key by registering for a FREE account (https://treblle.com/register)
