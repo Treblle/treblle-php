@@ -37,7 +37,7 @@ $treblle->addMeta('pricing', array('price_per_item' => 100, 'number_of_items' =>
 The setMeta method takes in two parameters. The first one is the name of your meta information and the second one is an array where you can add ANY information you want. Treblle will make sure that this is attached to the request and you will always be able to see it and search for it.
 
 ## Support
-If you have problems adding, installng or using Treblle feel free to reach out via <https://treblle.com> or contact vedran@flip.hr and we will make sure to do a FREE integration for you. 
+If you have problems adding, installing or using Treblle feel free to reach out via <https://treblle.com> or contact vedran@flip.hr and we will make sure to do a FREE integration for you. 
 
 ## License
 Copyright 2020, Treblle. Licensed under the MIT license:
