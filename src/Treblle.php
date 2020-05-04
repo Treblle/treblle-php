@@ -57,18 +57,22 @@ class Treblle {
         $this->payload = array(
             'api_key' => $this->api_key,
             'project_id' => $this->project_id,
-            'version' => 0.3,
+            'version' => 0.5,
+            'sdk' => 'php',
             'data' => array(
                 'server' => array(
                 	'timezone' => $this->getTimezone(),
                     'os' => php_uname(),
-                    'language' => 'php-'.phpversion(),
-                    'sapi' => PHP_SAPI,
                     'software' => $this->getServerVariable('SERVER_SOFTWARE'),
                     'signature' => $this->getServerVariable('SERVER_SIGNATURE'),
                     'protocol' => $this->getServerVariable('SERVER_PROTOCOL'),
-                    'encoding' => $this->getServerVariable('HTTP_ACCEPT_ENCODING'),
-                    'powered_by' => $this->getIniValue('expose_php')
+                    'encoding' => $this->getServerVariable('HTTP_ACCEPT_ENCODING')
+                ),
+                'php' => array(
+                    'version' => phpversion(),
+                    'sapi' => PHP_SAPI,
+                    'is_exposed' => $this->getIniValue('expose_php'),
+                    'are_errors_displayed' => $this->getIniValue('display_errors')
                 ),
                 'request' => array(
                     'timestamp' => $this->getTimestamp(),
@@ -255,7 +259,13 @@ class Treblle {
     public function getServerVariable($variable) {
 
         if(isset($_SERVER[$variable])) {
-            return $_SERVER[$variable];
+            
+            if($_SERVER[$variable]) {
+                return $_SERVER[$variable];
+            }
+            
+            return null;
+
         } else {
             return null;
         }
@@ -268,8 +278,19 @@ class Treblle {
      */
     public function getIniValue($variable) {
 
-        return ini_get($variable);
+        $bool_value = filter_var(ini_get($variable), FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
 
+        if(is_bool($bool_value)) {
+
+            if(ini_get($variable)) {
+                return 'On';
+            } else {
+                return 'Off';
+            }
+
+        } else {
+            return ini_get($variable);
+        }
     }
 
     /**
