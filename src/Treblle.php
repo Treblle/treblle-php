@@ -66,7 +66,9 @@ class Treblle {
                     'sapi' => PHP_SAPI,
                     'software' => $this->getServerVariable('SERVER_SOFTWARE'),
                     'signature' => $this->getServerVariable('SERVER_SIGNATURE'),
-                    'protocol' => $this->getServerVariable('SERVER_PROTOCOL')
+                    'protocol' => $this->getServerVariable('SERVER_PROTOCOL'),
+                    'encoding' => $this->getServerVariable('HTTP_ACCEPT_ENCODING'),
+                    'powered_by' => $this->getIniValue('expose_php')
                 ),
                 'request' => array(
                     'timestamp' => $this->getTimestamp(),
@@ -80,6 +82,7 @@ class Treblle {
                 ),
                 'response' => array(
                     'code' => http_response_code(),
+                    'headers' => $this->getResponseHeaders(),
                     'size' => 0,
                     'load_time' => 0,
                     'body' => null
@@ -196,6 +199,8 @@ class Treblle {
         }
 
         $this->guzzle->request('POST', 'https://rocknrolla.treblle.com', [
+            'connect_timeout' => 10,
+            'timeout' => 10,
             'verify' => false,
             'headers' => [
                 'Content-Type' => 'application/json',
@@ -245,7 +250,7 @@ class Treblle {
 
     /**
      * Get PHP global variables
-     * return @array
+     * return @string
      */
     public function getServerVariable($variable) {
 
@@ -254,6 +259,16 @@ class Treblle {
         } else {
             return null;
         }
+
+    }
+
+    /**
+     * Get PHP configuration variables
+     * return @string
+     */
+    public function getIniValue($variable) {
+
+        return ini_get($variable);
 
     }
 
@@ -299,6 +314,11 @@ class Treblle {
         return $now->format('Y-m-d H:i:s');
     }
 
+    /**
+     * Get current timezone
+     * 
+     * return @string
+     */
     public function getTimezone() {
     	
     	$timezone = 'UTC';
@@ -310,6 +330,30 @@ class Treblle {
     	return $timezone;
     }
 
+
+    /**
+     * Get response headers
+     * 
+     * return @array
+     */
+    public function getResponseHeaders() {
+        
+        $data = [];
+        $headers = headers_list();
+
+        if(is_array($headers) && ! empty($headers)) {
+            foreach ($headers as $header) {
+                $header = explode(':', $header);
+                $data[array_shift($header)] = trim(implode(':', $header));
+            }
+        }
+
+        if(empty($data)) {
+            return null;
+        }
+
+        return $data;
+    }
 
     /**
      * Set log meta data
