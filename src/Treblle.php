@@ -62,7 +62,11 @@ class Treblle {
             'data' => array(
                 'server' => array(
                 	'timezone' => $this->getTimezone(),
-                    'os' => php_uname(),
+                    'os' => array(
+                        'name' => php_uname('s'),
+                        'release' => php_uname('r'),
+                        'architecture' => php_uname('m')
+                    ),
                     'software' => $this->getServerVariable('SERVER_SOFTWARE'),
                     'signature' => $this->getServerVariable('SERVER_SIGNATURE'),
                     'protocol' => $this->getServerVariable('SERVER_PROTOCOL'),
@@ -71,8 +75,8 @@ class Treblle {
                 'php' => array(
                     'version' => phpversion(),
                     'sapi' => PHP_SAPI,
-                    'is_exposed' => $this->getIniValue('expose_php'),
-                    'are_errors_displayed' => $this->getIniValue('display_errors')
+                    'expose_php' => $this->getIniValue('expose_php'),
+                    'display_errors' => $this->getIniValue('display_errors')
                 ),
                 'request' => array(
                     'timestamp' => $this->getTimestamp(),
