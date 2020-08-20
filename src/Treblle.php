@@ -5,13 +5,13 @@ namespace Treblle;
 class Treblle {
     
     /**
-     * Get your Treblle API key by registering for a FREE account (https://treblle.com/register)
+     * Create a FREE Treblle account => https://treblle.com/register
      * @var string
      */
     private $api_key;
 
     /**
-     * Get your Treblle project ID by registering for a FREE account (https://treblle.com/register)
+     * Create a FREE Treblle account => https://treblle.com/register
      * @var string
      */
     private $project_id;
@@ -34,7 +34,6 @@ class Treblle {
      */
     public function __construct($api_key = null, $project_id = null) {
 
-        // TURN ON ERROR REPORTING
         error_reporting(E_ALL);
 
         if(is_null($api_key)) {
@@ -54,31 +53,30 @@ class Treblle {
 
         $this->guzzle = new \GuzzleHttp\Client;
 
-        $this->payload = array(
+        $this->payload = [
             'api_key' => $this->api_key,
             'project_id' => $this->project_id,
-            'version' => 0.5,
+            'version' => 0.6,
             'sdk' => 'php',
-            'data' => array(
-                'server' => array(
+            'data' => [
+                'server' => [
                 	'timezone' => $this->getTimezone(),
-                    'os' => array(
+                    'os' => [
                         'name' => php_uname('s'),
                         'release' => php_uname('r'),
                         'architecture' => php_uname('m')
-                    ),
+                    ],
                     'software' => $this->getServerVariable('SERVER_SOFTWARE'),
                     'signature' => $this->getServerVariable('SERVER_SIGNATURE'),
                     'protocol' => $this->getServerVariable('SERVER_PROTOCOL'),
                     'encoding' => $this->getServerVariable('HTTP_ACCEPT_ENCODING')
-                ),
-                'php' => array(
+                ],
+                'php' => [
                     'version' => phpversion(),
-                    'sapi' => PHP_SAPI,
                     'expose_php' => $this->getIniValue('expose_php'),
                     'display_errors' => $this->getIniValue('display_errors')
-                ),
-                'request' => array(
+                ],
+                'request' => [
                     'timestamp' => $this->getTimestamp(),
                     'ip' => $this->getClientIpAddress(),
                     'url' => $this->getEndpointUrl(),
@@ -87,25 +85,23 @@ class Treblle {
                     'headers' => getallheaders(),
                     'body' => $this->maskFields($_REQUEST),
                     'raw' => $this->maskFields(json_decode(file_get_contents('php://input'), true))
-                ),
-                'response' => array(
+                ],
+                'response' => [
                     'code' => http_response_code(),
                     'headers' => $this->getResponseHeaders(),
                     'size' => 0,
                     'load_time' => 0,
                     'body' => null
-                ),
-                'errors' => array(),
-                'git' => $this->getGitCommit(),
-                'meta' => null
-            )
-        );
+                ],
+                'errors' => []
+            ]
+        ];
 
         ob_start();
 
-        set_error_handler(array($this, 'onError'));
-        set_exception_handler(array($this, 'onException'));
-        register_shutdown_function(array($this, 'onShutdown'));
+        set_error_handler([$this, 'onError']);
+        set_exception_handler([$this, 'onException']);
+        register_shutdown_function([$this, 'onShutdown']);
     }
 
 
@@ -120,13 +116,13 @@ class Treblle {
     public function onError($type, $message, $file, $line) {
 
         array_push($this->payload['data']['errors'],
-            array(
+            [
                 'source' => 'onError',
                 'type' => $this->translateErrorType($type),
                 'message' => $message,
                 'file' => $file,
                 'line' => $line
-            )
+            ]
         );
     }
 
@@ -138,13 +134,13 @@ class Treblle {
     public function onException($exception) {
 
         array_push($this->payload['data']['errors'],
-            array(
+            [
                 'source' => 'onException',
                 'type' => 'UNHANDLED_EXCEPTION',
                 'message' => $exception->getMessage(),
                 'file' => $exception->getFile(),
                 'line' => $exception->getLine()
-            )
+            ]
         );      
 
     }
@@ -160,28 +156,30 @@ class Treblle {
 
         $error = error_get_last();
 
-        if(!is_null($error)) {
+        if(! is_null($error)) {
             if($error['type'] == E_ERROR || $error['type'] == E_PARSE) {
                 array_push($this->payload['data']['errors'],
-                    array(
+                    [
                         'source' => 'onShutdown',
                         'type' => $this->translateErrorType($error['type']),
                         'message' => $error['message'],
                         'file' => $error['file'],
                         'line' => $error['line']
-                    )
+                    ]
                 );
             }
         }
 
         if($response_size >= 2000000) {
 
-            array(
-                'source' => 'onShutdown',
-                'type' => 'E_USER_ERROR',
-                'message' => 'JSON response size is over 2MB',
-                'file' => null,
-                'line' => null
+            array_push($this->payload['data']['errors'],
+                [
+                    'source' => 'onShutdown',
+                    'type' => 'E_USER_ERROR',
+                    'message' => 'JSON response size is over 2MB',
+                    'file' => null,
+                    'line' => null
+                ]
             );
 
         } else {
@@ -194,13 +192,13 @@ class Treblle {
                 $this->payload['data']['response']['size'] = $response_size;
             } else {
                 array_push($this->payload['data']['errors'],
-                    array(
+                    [
                         'source' => 'onShutdown',
                         'type' => 'INVALID_JSON',
                         'message' => 'Invalid JSON format',
                         'file' => null,
                         'line' => null
-                    )
+                    ]
                 );
             }
 
@@ -215,9 +213,9 @@ class Treblle {
                 'x-api-key' => $this->api_key
             ], 
             'body' => json_encode(
-                array(
+                [
                     'body' => $this->payload
-                )
+                ]
             )
         ]);
     }
@@ -228,9 +226,9 @@ class Treblle {
      */
     public function getClientIpAddress() {
 
-        if(!empty( $_SERVER['HTTP_CLIENT_IP'])) {
+        if(! empty($_SERVER['HTTP_CLIENT_IP'])) {
             $ip_address = $_SERVER['HTTP_CLIENT_IP'];
-        } else if(!empty( $_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        } else if(! empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
             $ip_address = $_SERVER['HTTP_X_FORWARDED_FOR'];
         } else {
             $ip_address = $_SERVER['REMOTE_ADDR'];
@@ -253,7 +251,6 @@ class Treblle {
         }
 
         return $is_secure.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
-
     }
 
     /**
@@ -263,17 +260,12 @@ class Treblle {
     public function getServerVariable($variable) {
 
         if(isset($_SERVER[$variable])) {
-            
             if($_SERVER[$variable]) {
                 return $_SERVER[$variable];
             }
-            
-            return null;
-
-        } else {
-            return null;
         }
 
+        return null;
     }
 
     /**
@@ -307,25 +299,6 @@ class Treblle {
         } else {
             return (float) 0.0000;
         }
-    }
-
-    /**
-     * Get git commit information
-     * return @array
-     */
-    public function getGitCommit() {
-
-        exec('git rev-list --format=%B --max-count=1 HEAD', $commit);
-
-        if(!empty($commit)) {
-            return array(
-                'commit' => trim(ltrim($commit[0], 'commit')),
-                'message' => $commit[1]
-          );  
-        } else {
-            return null;
-        }
-
     }
 
     /**
@@ -381,21 +354,6 @@ class Treblle {
     }
 
     /**
-     * Set log meta data
-     * @return void
-     */
-    public function addMeta($meta_1 = null, $meta_2 = null) {
-
-        if(!is_array($this->payload['data']['meta'])) {
-            $this->payload['data']['meta'] = array();
-        }
-
-        if(!is_null($meta_1) && !is_null($meta_2)) {
-            $this->payload['data']['meta'][$meta_1] = $meta_2;
-        }
-    }
-
-    /**
      * Translate error type
      * @return string
      */
@@ -443,7 +401,7 @@ class Treblle {
      */
     public function maskFields($data) {
 
-        $fields = ['password', 'pwd',  'secret', 'password_confirmation'];
+        $fields = ['password', 'pwd',  'secret', 'password_confirmation', 'cc', 'card_number', 'ccv'];
     
         if(!is_array($data)) {
             return;
