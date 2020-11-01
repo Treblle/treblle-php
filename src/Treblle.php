@@ -56,10 +56,11 @@ class Treblle {
         $this->payload = [
             'api_key' => $this->api_key,
             'project_id' => $this->project_id,
-            'version' => 0.6,
+            'version' => 0.7,
             'sdk' => 'php',
             'data' => [
                 'server' => [
+                    'ip' => $this->getServerVariable('SERVER_ADDR'),
                 	'timezone' => $this->getTimezone(),
                     'os' => [
                         'name' => php_uname('s'),
