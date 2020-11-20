@@ -56,7 +56,7 @@ class Treblle {
         $this->payload = [
             'api_key' => $this->api_key,
             'project_id' => $this->project_id,
-            'version' => 0.7,
+            'version' => 0.8,
             'sdk' => 'php',
             'data' => [
                 'server' => [
@@ -72,7 +72,8 @@ class Treblle {
                     'protocol' => $this->getServerVariable('SERVER_PROTOCOL'),
                     'encoding' => $this->getServerVariable('HTTP_ACCEPT_ENCODING')
                 ],
-                'php' => [
+                'language' => [
+                    'name' => 'php',
                     'version' => phpversion(),
                     'expose_php' => $this->getIniValue('expose_php'),
                     'display_errors' => $this->getIniValue('display_errors')
@@ -213,11 +214,7 @@ class Treblle {
                 'Content-Type' => 'application/json',
                 'x-api-key' => $this->api_key
             ], 
-            'body' => json_encode(
-                [
-                    'body' => $this->payload
-                ]
-            )
+            'body' => json_encode($this->payload)
         ]);
     }
 
