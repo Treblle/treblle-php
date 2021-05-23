@@ -11,7 +11,7 @@ class Treblle {
     private $api_key;
 
     /**
-     * Create a FREE Treblle account => https://treblle.com/register
+     * Your Treblle Project ID
      * @var string
      */
     private $project_id;
@@ -28,11 +28,22 @@ class Treblle {
     private $guzzle;
 
     /**
+     * Default fields that will be masked
+     * @var array
+     */
+    private $masked = [
+        'password', 'pwd',  'secret', 'password_confirmation', 'cc', 'card_number', 'ccv', 'ssn',
+            'credit_score'
+    ];
+
+    /**
      * Create a new Treblle instance
      * @param string $api_key 
+     * @param string $project 
+     * @param array $custom_fields 
      * @return void
      */
-    public function __construct($api_key = null, $project_id = null) {
+    public function __construct($api_key = null, $project_id = null, $custom_fields = null) {
 
         error_reporting(E_ALL);
 
@@ -44,14 +55,19 @@ class Treblle {
             throw new \Exception('Please provide a valid Treblle Project ID.');
         }
 
-        $this->api_key = $api_key;
-        $this->project_id = $project_id;
-
         if(!class_exists('\GuzzleHttp\Client')) {
             throw new \Exception('Treblle needs the Guzzle HTTP client to work. Please run: composer require guzzlehttp/guzzle');
         }
 
+        $this->api_key = $api_key;
+        $this->project_id = $project_id;
         $this->guzzle = new \GuzzleHttp\Client;
+
+        if(is_array($custom_fields)) {
+            if(!empty($custom_fields)) {
+                $this->masked = array_unique(array_merge($this->masked, $custom_fields));
+            }
+        }        
 
         $this->payload = [
             'api_key' => $this->api_key,
@@ -61,7 +77,7 @@ class Treblle {
             'data' => [
                 'server' => [
                     'ip' => $this->getServerVariable('SERVER_ADDR'),
-                	'timezone' => $this->getTimezone(),
+                    'timezone' => $this->getTimezone(),
                     'os' => [
                         'name' => php_uname('s'),
                         'release' => php_uname('r'),
@@ -207,8 +223,8 @@ class Treblle {
         }
 
         $this->guzzle->request('POST', 'https://rocknrolla.treblle.com', [
-            'connect_timeout' => 10,
-            'timeout' => 10,
+            'connect_timeout' => 3,
+            'timeout' => 3,
             'verify' => false,
             'headers' => [
                 'Content-Type' => 'application/json',
@@ -316,14 +332,14 @@ class Treblle {
      * return @string
      */
     public function getTimezone() {
-    	
-    	$timezone = 'UTC';
+        
+        $timezone = 'UTC';
 
-    	if (ini_get('date.timezone')) {
-    		$timezone = ini_get('date.timezone');
-    	}
+        if (ini_get('date.timezone')) {
+            $timezone = ini_get('date.timezone');
+        }
 
-    	return $timezone;
+        return $timezone;
     }
 
 
@@ -398,11 +414,6 @@ class Treblle {
      * @return array
      */
     public function maskFields($data) {
-
-        $fields = [
-            'password', 'pwd',  'secret', 'password_confirmation', 'cc', 'card_number', 'ccv', 'ssn',
-            'credit_score'
-        ];
     
         if(!is_array($data)) {
             return;
@@ -413,7 +424,7 @@ class Treblle {
             if(is_array($value)) {
                 $this->maskFields($data[$key]);
             } else {
-                foreach ($fields as $field) {
+                foreach ($this->masked as $field) {
                     
                     if(preg_match('/\b'.$field.'\b/mi', $key)) {
                         $data[$key] = str_repeat('*', strlen($value));
