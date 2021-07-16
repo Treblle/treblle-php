@@ -222,16 +222,23 @@ class Treblle {
 
         }
 
-        $this->guzzle->request('POST', 'https://rocknrolla.treblle.com', [
-            'connect_timeout' => 3,
-            'timeout' => 3,
-            'verify' => false,
-            'headers' => [
-                'Content-Type' => 'application/json',
-                'x-api-key' => $this->api_key
-            ], 
-            'body' => json_encode($this->payload)
-        ]);
+        try {
+            $this->guzzle->request('POST', 'https://rocknrolla.treblle.com', [
+                'connect_timeout' => 1,
+                'timeout' => 1,
+                'verify' => false,
+                'http_errors' => false,
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                    'x-api-key' => $this->api_key
+                ], 
+                'body' => json_encode($this->payload)
+            ]);
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+        } catch (\GuzzleHttp\Exception\ConnectException $e) {
+        }
+
+
     }
 
     /**
