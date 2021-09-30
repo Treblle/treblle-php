@@ -1,0 +1,181 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "api_key": {
+      "type": "string"
+    },
+    "project_id": {
+      "type": "string"
+    },
+    "version": {
+      "type": "number"
+    },
+    "sdk": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "server": {
+          "type": "object",
+          "properties": {
+            "timezone": {
+              "type": "string"
+            },
+            "os": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "release": {
+                  "type": "string"
+                },
+                "architecture": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name",
+                "release",
+                "architecture"
+              ]
+            },
+            "software": {
+              "type": "string"
+            },
+            "signature": {
+              "type": "string"
+            },
+            "protocol": {
+              "type": "string"
+            },
+            "encoding": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "timezone",
+            "os",
+            "software",
+            "signature",
+            "protocol",
+            "encoding"
+          ]
+        },
+        "language": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "version": {
+              "type": "string"
+            },
+            "expose_php": {
+              "type": "string"
+            },
+            "display_errors": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "name",
+            "version",
+            "expose_php",
+            "display_errors"
+          ]
+        },
+        "request": {
+          "type": "object",
+          "properties": {
+            "timestamp": {
+              "type": "string"
+            },
+            "ip": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string"
+            },
+            "user_agent": {
+              "type": "string"
+            },
+            "method": {
+              "type": "string"
+            },
+            "headers": {
+              "type": "object"
+            },
+            "body": {
+              "type": "object"
+            },
+            "raw": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "timestamp",
+            "ip",
+            "url",
+            "user_agent",
+            "method",
+            "headers",
+            "body",
+            "raw"
+          ]
+        },
+        "response": {
+          "type": "object"
+        },
+        "errors": {
+          "type": "array",
+          "items": [
+            {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "message": {
+                  "type": "string"
+                },
+                "file": {
+                  "type": "string"
+                },
+                "line": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "source",
+                "type",
+                "message",
+                "file",
+                "line"
+              ]
+            }
+          ]
+        }
+      },
+      "required": [
+        "server",
+        "language",
+        "request",
+        "response",
+        "errors"
+      ]
+    }
+  },
+  "required": [
+    "api_key",
+    "project_id",
+    "version",
+    "sdk",
+    "data"
+  ]
+}

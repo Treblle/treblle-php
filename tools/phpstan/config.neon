@@ -1,0 +1,19 @@
+parameters:
+    level: max
+    paths:
+        - %rootDir%/../../../src
+
+includes:
+    - %rootDir%/../../../vendor/phpstan/phpstan-beberlei-assert/extension.neon
+    - %rootDir%/../../../vendor/phpstan/phpstan-phpunit/extension.neon
+    - %rootDir%/../../../vendor/phpstan/phpstan-phpunit/rules.neon
+
+services:
+    -
+        class: TheCodingMachine\Safe\PHPStan\Rules\UseSafeFunctionsRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: TheCodingMachine\Safe\PHPStan\Type\Php\ReplaceSafeFunctionsDynamicReturnTypeExtension
+        tags:
+            - phpstan.broker.dynamicFunctionReturnTypeExtension
