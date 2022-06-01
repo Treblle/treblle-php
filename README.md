@@ -49,7 +49,7 @@ require_once __DIR__.'/../vendor/autoload.php';
 error_reporting(E_ALL);
 ob_start();
 
-$treblle = TreblleFactory::create('_YOUR_API_KEY_', '_YOUR_PROJECT_ID_']);
+$treblle = TreblleFactory::create('_YOUR_API_KEY_', '_YOUR_PROJECT_ID_');
 ```
 
 That's it. Your API requests and responses are now being sent to your Treblle project. Just by adding that line of code

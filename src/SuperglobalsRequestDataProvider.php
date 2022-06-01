@@ -24,7 +24,7 @@ final class SuperglobalsRequestDataProvider implements RequestDataProvider
             \Safe\gmdate('Y-m-d H:i:s'),
             $this->getClientIpAddress(),
             $this->getEndpointUrl(),
-            $_SERVER['HTTP_USER_AGENT'] ?? null,
+            $this->getUserAgent(),
             $_SERVER['REQUEST_METHOD'] ?? null,
             \Safe\getallheaders(),
             $this->anonymizer->annonymize($_REQUEST),
@@ -58,6 +58,22 @@ final class SuperglobalsRequestDataProvider implements RequestDataProvider
         $protocol = $_SERVER['HTTPS'] ?? null !== 'off' ? 'https://' : 'http://';
 
         return $protocol.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+    }
+
+    /**
+     * Get the user agent.
+     */
+    private function getUserAgent(): string
+    {
+        $user_agent = '';
+
+        if(isset($_SERVER['HTTP_USER_AGENT'])) {
+            if(!empty($_SERVER['HTTP_USER_AGENT'])) {
+                $user_agent = $_SERVER['HTTP_USER_AGENT'];
+            }
+        }
+
+        return $user_agent;
     }
 
     /**
