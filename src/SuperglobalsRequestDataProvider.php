@@ -67,10 +67,8 @@ final class SuperglobalsRequestDataProvider implements RequestDataProvider
     {
         $user_agent = '';
 
-        if (isset($_SERVER['HTTP_USER_AGENT'])) {
-            if (!empty($_SERVER['HTTP_USER_AGENT'])) {
-                $user_agent = $_SERVER['HTTP_USER_AGENT'];
-            }
+        if (isset($_SERVER['HTTP_USER_AGENT']) && !empty($_SERVER['HTTP_USER_AGENT'])) {
+            $user_agent = $_SERVER['HTTP_USER_AGENT'];
         }
 
         return $user_agent;
