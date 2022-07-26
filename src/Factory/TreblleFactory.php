@@ -16,8 +16,6 @@ use Treblle\Treblle;
 
 final class TreblleFactory
 {
-    private const DEFAULT_ENDPOINT_URL = 'https://rocknrolla.treblle.com';
-
     /**
      * @param list<string> $maskedFields
      * @param array<string, mixed> $config
@@ -46,7 +44,6 @@ final class TreblleFactory
         $anonymizer = new PayloadAnonymizer($maskedFields);
 
         $treblle = new Treblle(
-            $config['url'] ?? self::DEFAULT_ENDPOINT_URL,
             $apiKey,
             $projectId,
             $config['client'] ?? new Client(),

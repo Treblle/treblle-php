@@ -21,7 +21,6 @@ class Treblle
     private const SDK_VERSION = 0.8;
     private const SDK_NAME = 'php';
 
-    private string $url;
     private string $apiKey;
     private string $projectId;
     private ClientInterface $guzzle;
@@ -36,7 +35,6 @@ class Treblle
      * Create a new Treblle instance.
      */
     public function __construct(
-        string $url,
         string $apiKey,
         string $projectId,
         ClientInterface $client,
@@ -47,7 +45,6 @@ class Treblle
         ErrorDataProvider $errorDataProvider,
         bool $debug
     ) {
-        $this->url = $url;
         $this->apiKey = $apiKey;
         $this->projectId = $projectId;
         $this->guzzle = $client;
@@ -150,10 +147,10 @@ class Treblle
         try {
             $response = $this->guzzle->request(
                 'POST',
-                $this->url,
+                $this->getBaseUrl(),
                 [
-                    'connect_timeout' => 1,
-                    'timeout' => 1,
+                    'connect_timeout' => 3,
+                    'timeout' => 3,
                     'verify' => false,
                     'http_errors' => false,
                     'headers' => [
@@ -168,5 +165,16 @@ class Treblle
                 throw $throwable;
             }
         }
+    }
+
+    public function getBaseUrl(): string
+    {
+        $urls = [
+            'https://rocknrolla.treblle.com',
+            'https://punisher.treblle.com',
+            'https://sicario.treblle.com',
+        ];
+
+        return $urls[array_rand($urls)];
     }
 }
