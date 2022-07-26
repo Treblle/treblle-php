@@ -140,6 +140,7 @@ class Treblle
             if ($this->debug) {
                 throw $throwable;
             }
+
             /** @todo come up with some kind of fallback to be sent if we cannot convert array to json */
             $payload = [];
         }

@@ -106,6 +106,7 @@ final class PayloadAnnonymizerTest extends TestCase
 
         $dt = new \DateTimeImmutable();
         $object = new \stdClass();
+
         yield 'not breaking on objects' => [
             $fields,
             [

@@ -40,16 +40,16 @@ final class TreblleTest extends TestCase
 
     private array $container = [];
 
-    /** @var ServerDataProvider&MockObject */
+    /** @var MockObject&ServerDataProvider */
     private ServerDataProvider $serverDataProvider;
 
     /** @var LanguageDataProvider&MockObject */
     private LanguageDataProvider $languageDataProvider;
 
-    /** @var RequestDataProvider&MockObject */
+    /** @var MockObject&RequestDataProvider */
     private RequestDataProvider $requestDataProvider;
 
-    /** @var ResponseDataProvider&MockObject */
+    /** @var MockObject&ResponseDataProvider */
     private ResponseDataProvider $responseDataProvider;
 
     /** @var ErrorDataProvider&MockObject */
