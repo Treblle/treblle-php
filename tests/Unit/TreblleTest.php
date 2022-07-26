@@ -77,7 +77,6 @@ final class TreblleTest extends TestCase
         $this->errorDataProvider = $this->createMock(ErrorDataProvider::class);
 
         $this->subjectUnderTest = new Treblle(
-            'http://127.0.0.1',
             'my api key',
             'my project id',
             $client,
