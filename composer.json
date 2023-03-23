@@ -1,105 +1,74 @@
 {
-  "type": "library",
-  "name": "treblle/treblle-php",
-  "description": "Stay in tune with your APIs",
-  "homepage": "https://treblle.com/",
-  "keywords": [
-    "phpunit",
-    "treblle",
-    "api",
-    "monitoring",
-    "debuging",
-    "documentation"
-  ],
-  "license": "MIT",
-  "authors": [
-    {
-      "role": "Developer",
-      "name": "Vedran Cindrić",
-      "email": "vedran@treblle.com",
-      "homepage": "https://treblle.com/"
+    "type": "library",
+    "name": "treblle/treblle-php",
+    "description": "Stay in tune with your APIs",
+    "homepage": "https://treblle.com/",
+    "keywords": [
+        "phpunit",
+        "treblle",
+        "api",
+        "monitoring",
+        "debuging",
+        "documentation"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "role": "Developer",
+            "name": "Vedran Cindrić",
+            "email": "vedran@treblle.com",
+            "homepage": "https://treblle.com/"
+        },
+        {
+            "role": "Developer",
+            "name": "Steve McDougall",
+            "email": "juststevemcd@gmail.com",
+            "homepage": "https://treblle.com/"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Treblle\\": "src/"
+        }
     },
-    {
-      "role": "Developer",
-      "name": "Steve McDougall",
-      "email": "juststevemcd@gmail.com",
-      "homepage": "https://treblle.com/"
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\Treblle\\": "tests/"
+        }
+    },
+    "require": {
+        "php": "^8.1",
+        "php-http/client-common": "^2.6",
+        "php-http/discovery": "^1.15.2",
+        "php-http/mock-client": "^1.5",
+        "treblle/treblle-sdk-core": "0.0.2"
+    },
+    "require-dev": {
+        "justinrainbow/json-schema": "^5.2.12",
+        "nyholm/psr7": "^1.5.1",
+        "pestphp/pest": "^2.2",
+        "phpstan/phpstan": "^0.12.99",
+        "symfony/http-client": "^6.2.7"
+    },
+    "config": {
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "allow-plugins": {
+            "php-http/discovery": true,
+            "pestphp/pest-plugin": true
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "scripts": {
+        "pint": [
+            "./vendor/bin/pint"
+        ],
+        "stan": [
+            "./vendor/bin/phpstan analyse"
+        ],
+        "test": [
+            "./vendor/bin/pest"
+        ]
     }
-  ],
-  "autoload": {
-    "psr-4": {
-      "Treblle\\": "src/"
-    }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "Tests\\Treblle\\": "tests/"
-    }
-  },
-  "require": {
-    "php": "^8.1",
-    "php-http/client-common": "^2.6",
-    "php-http/discovery": "^1.15.2",
-    "php-http/mock-client": "^1.5",
-    "treblle/treblle-sdk-core": "0.0.2"
-  },
-  "require-dev": {
-    "justinrainbow/json-schema": "^5.2.12",
-    "nyholm/psr7": "^1.5.1",
-    "phpstan/phpstan": "^0.12.99",
-    "symfony/http-client": "^6.2.7"
-  },
-  "config": {
-    "preferred-install": "dist",
-    "sort-packages": true,
-    "allow-plugins": {
-      "php-http/discovery": true
-    }
-  },
-  "minimum-stability": "dev",
-  "prefer-stable": true,
-  "scripts": {
-    "security:check": [
-      "bin/local-php-security-checker"
-    ],
-    "code-style:fix": [
-      "PHP_CS_FIXER_FUTURE_MODE=1 php-cs-fixer fix --config='./tools/php-cs-fixer/config.php' --diff --ansi --using-cache=no"
-    ],
-    "code-style:check": [
-      "PHP_CS_FIXER_FUTURE_MODE=1 php-cs-fixer fix --config='./tools/php-cs-fixer/config.php' --dry-run --diff --ansi --using-cache=no"
-    ],
-    "lint:php": [
-      "parallel-lint src",
-      "parallel-lint tests"
-    ],
-    "lint": [
-      "@lint:php"
-    ],
-    "rector:check": [
-      "rector --config='./tools/rector/config.php' --dry-run --ansi --no-progress-bar"
-    ],
-    "rector:fix": [
-      "rector  --config='./tools/rector/config.php' --ansi --no-progress-bar"
-    ],
-    "phpstan": [
-      "phpstan analyse --configuration='./tools/phpstan/config.neon' --ansi --no-progress --memory-limit=3G"
-    ],
-    "static-analysis": [
-      "@composer validate",
-      "@lint",
-      "@code-style:check",
-      "@phpstan",
-      "@rector:check"
-    ],
-    "phpunit": [
-      "phpunit --configuration='./tools/phpunit/config.xml' --colors --do-not-cache-result"
-    ],
-    "tests": [
-      "@phpunit"
-    ],
-    "qc": [
-      "@static-analysis",
-      "@tests"
-    ]
-  }
 }

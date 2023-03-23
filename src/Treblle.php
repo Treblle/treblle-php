@@ -7,6 +7,7 @@ namespace Treblle;
 use Http\Client\HttpClient;
 use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\Psr17FactoryDiscovery;
+use Nyholm\Psr7\Uri;
 use Psr\Http\Message\RequestFactoryInterface;
 use Safe\Exceptions\JsonException;
 use Throwable;
@@ -29,8 +30,8 @@ final class Treblle
     private const SDK_VERSION = 1.0;
     private const SDK_NAME = 'php';
 
-    private HttpClient $client;
-    private RequestFactoryInterface $requestFactory;
+    public HttpClient $client;
+    public RequestFactoryInterface $requestFactory;
 
     /**
      * Create a new Treblle instance.
@@ -48,12 +49,12 @@ final class Treblle
     public function __construct(
         private readonly string $apiKey,
         private readonly string $projectId,
-        private readonly ServerContract $server,
-        private readonly LanguageContract $language,
-        private readonly RequestContract $request,
-        private readonly ResponseContract $response,
-        private readonly ErrorContract $error,
-        private readonly MaskingContract $masker,
+        public readonly ServerContract $server,
+        public readonly LanguageContract $language,
+        public readonly RequestContract $request,
+        public readonly ResponseContract $response,
+        public readonly ErrorContract $error,
+        public readonly MaskingContract $masker,
         private readonly bool $debug,
     ) {
         $this->client = HttpClientDiscovery::find();
@@ -104,7 +105,7 @@ final class Treblle
                 error: new Error(
                     source: 'onException',
                     type: ErrorType::get(
-                        type: 0,
+                        type: E_ERROR,
                     ),
                     message: $exception->getMessage(),
                     file: $exception->getFile(),
@@ -124,7 +125,7 @@ final class Treblle
      * @throws Throwable
      * @return array<int|string, mixed>
      */
-    private function buildPayload(): array
+    public function buildPayload(): array
     {
         try {
             return [
@@ -177,15 +178,12 @@ final class Treblle
         }
 
         try {
-            /**
-             * @var Endpoint $endpoint
-             */
-            $endpoint = array_rand(Endpoint::cases());
-
             $this->client->sendRequest(
                 request: $this->requestFactory->createRequest(
                     'POST',
-                    $endpoint->value,
+                    new Uri(
+                        uri: Endpoint::PUNISHER->value,
+                    ),
                     $payload,
                     [
                         'Content-Type' => 'application/json',
