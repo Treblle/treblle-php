@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Treblle;
 
 use Http\Client\HttpClient;
+use http\Client\Request;
 use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\Psr17FactoryDiscovery;
 use Nyholm\Psr7\Uri;
 use Psr\Http\Message\RequestFactoryInterface;
+use Psr\Http\Message\StreamFactoryInterface;
 use Safe\Exceptions\JsonException;
 use Throwable;
 use Treblle\Core\Contracts\DataProviders\ErrorContract;
@@ -178,24 +180,39 @@ final class Treblle
         }
 
         try {
+            $request = $this->requestFactory->createRequest(
+                method: 'POST',
+                uri: Endpoint::PUNISHER->value,
+            )->withAddedHeader(
+                'Content-Type',
+                'application/json',
+            )->withAddedHeader(
+                'x-api-key',
+                $this->apiKey
+            )->withBody($this->createStream(
+                body: $payload,
+            ));
+
             $this->client->sendRequest(
-                request: $this->requestFactory->createRequest(
-                    'POST',
-                    new Uri(
-                        uri: Endpoint::PUNISHER->value,
-                    ),
-                    $payload,
-                    [
-                        'Content-Type' => 'application/json',
-                        'x-api-key' => $this->apiKey,
-                    ],
-                ),
+                request: $request,
             );
         } catch (Throwable $throwable) {
             if ($this->debug) {
                 throw $throwable;
             }
         }
+    }
+
+    /**
+     * @throws JsonException
+     */
+    public function createStream(string $body)
+    {
+        $streamFactory = Psr17FactoryDiscovery::findStreamFactory();
+
+        return $streamFactory->createStream(
+            content: $body,
+        );
     }
 
     public function setClient(HttpClient $client): Treblle

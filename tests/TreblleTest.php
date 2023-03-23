@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Http\Client\HttpClient;
 use Http\Mock\Client;
 use Nyholm\Psr7\Factory\Psr17Factory;
+use Psr\Http\Message\StreamInterface;
 use Treblle\Factory\TreblleFactory;
 use Treblle\Treblle;
 
@@ -35,6 +36,12 @@ it('can set the Http Client', function (): void {
         )->client,
     )->toBeInstanceOf(Client::class);
 });
+
+it('can create a stream', function (string $string): void {
+    expect(
+        $this->treblle->createStream($string),
+    )->toBeInstanceOf(StreamInterface::class);
+})->with('strings');
 
 it('can get the request factory', function (): void {
     expect(
