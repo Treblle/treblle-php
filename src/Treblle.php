@@ -26,7 +26,7 @@ use Treblle\Core\Support\ErrorType;
  */
 final class Treblle
 {
-    private const SDK_VERSION = 0.8;
+    private const SDK_VERSION = 1.0;
     private const SDK_NAME = 'php';
 
     private HttpClient $client;
@@ -177,10 +177,15 @@ final class Treblle
         }
 
         try {
+            /**
+             * @var Endpoint $endpoint
+             */
+            $endpoint = array_rand(Endpoint::cases());
+
             $this->client->sendRequest(
                 request: $this->requestFactory->createRequest(
                     'POST',
-                    array_rand(Endpoint::cases())->value,
+                    $endpoint->value,
                     $payload,
                     [
                         'Content-Type' => 'application/json',
