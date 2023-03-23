@@ -9,6 +9,7 @@ use http\Client\Request;
 use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\Psr17FactoryDiscovery;
 use Psr\Http\Message\RequestFactoryInterface;
+use Psr\Http\Message\StreamInterface;
 use Safe\Exceptions\JsonException;
 use Throwable;
 use Treblle\Core\Contracts\DataProviders\ErrorContract;
@@ -175,7 +176,9 @@ final class Treblle
             /**
              * @todo come up with some kind of fallback to be sent if we cannot convert array to json
              */
-            $payload = [];
+            $payload = \Safe\json_encode(
+                value: [],
+            );
         }
 
         try {
@@ -205,7 +208,7 @@ final class Treblle
     /**
      * @throws JsonException
      */
-    public function createStream(string $body)
+    public function createStream(string $body): StreamInterface
     {
         $streamFactory = Psr17FactoryDiscovery::findStreamFactory();
 
