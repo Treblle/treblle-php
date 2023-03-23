@@ -8,9 +8,7 @@ use Http\Client\HttpClient;
 use http\Client\Request;
 use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\Psr17FactoryDiscovery;
-use Nyholm\Psr7\Uri;
 use Psr\Http\Message\RequestFactoryInterface;
-use Psr\Http\Message\StreamFactoryInterface;
 use Safe\Exceptions\JsonException;
 use Throwable;
 use Treblle\Core\Contracts\DataProviders\ErrorContract;
@@ -85,7 +83,8 @@ final class Treblle
                     message: $message,
                     file: $file,
                     line: $line,
-                ));
+                )
+            );
         } catch (Throwable $throwable) {
             if ($this->debug) {
                 throw $throwable;
