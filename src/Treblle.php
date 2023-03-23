@@ -4,94 +4,114 @@ declare(strict_types=1);
 
 namespace Treblle;
 
-use GuzzleHttp\ClientInterface;
-use Treblle\Contract\ErrorDataProvider;
-use Treblle\Contract\LanguageDataProvider;
-use Treblle\Contract\RequestDataProvider;
-use Treblle\Contract\ResponseDataProvider;
-use Treblle\Contract\ServerDataProvider;
-use Treblle\Model\Data;
-use Treblle\Model\Error;
+use Http\Client\HttpClient;
+use Http\Discovery\HttpClientDiscovery;
+use Http\Discovery\Psr17FactoryDiscovery;
+use Psr\Http\Message\RequestFactoryInterface;
+use Safe\Exceptions\JsonException;
+use Throwable;
+use Treblle\Core\Contracts\DataProviders\ErrorContract;
+use Treblle\Core\Contracts\DataProviders\LanguageContract;
+use Treblle\Core\Contracts\DataProviders\RequestContract;
+use Treblle\Core\Contracts\DataProviders\ResponseContract;
+use Treblle\Core\Contracts\DataProviders\ServerContract;
+use Treblle\Core\Contracts\Masking\MaskingContract;
+use Treblle\Core\DataObjects\Data;
+use Treblle\Core\DataObjects\Error;
+use Treblle\Core\Http\Endpoint;
+use Treblle\Core\Support\ErrorType;
 
 /**
  * Create a FREE Treblle account => https://treblle.com/register.
  */
-class Treblle
+final class Treblle
 {
     private const SDK_VERSION = 0.8;
     private const SDK_NAME = 'php';
 
-    private string $apiKey;
-    private string $projectId;
-    private ClientInterface $guzzle;
-    private ServerDataProvider $serverDataProvider;
-    private LanguageDataProvider $languageDataProvider;
-    private RequestDataProvider $requestDataProvider;
-    private ResponseDataProvider $responseDataProvider;
-    private ErrorDataProvider $errorDataProvider;
-    private bool $debug;
+    private HttpClient $client;
+    private RequestFactoryInterface $requestFactory;
 
     /**
      * Create a new Treblle instance.
+     *
+     * @param string $apiKey
+     * @param string $projectId
+     * @param ServerContract $server
+     * @param LanguageContract $language
+     * @param RequestContract $request
+     * @param ResponseContract $response
+     * @param ErrorContract $error
+     * @param MaskingContract $masker
+     * @param bool $debug
      */
     public function __construct(
-        string $apiKey,
-        string $projectId,
-        ClientInterface $client,
-        ServerDataProvider $serverDataProvider,
-        LanguageDataProvider $languageDataProvider,
-        RequestDataProvider $requestDataProvider,
-        ResponseDataProvider $responseDataProvider,
-        ErrorDataProvider $errorDataProvider,
-        bool $debug
+        private readonly string $apiKey,
+        private readonly string $projectId,
+        private readonly ServerContract $server,
+        private readonly LanguageContract $language,
+        private readonly RequestContract $request,
+        private readonly ResponseContract $response,
+        private readonly ErrorContract $error,
+        private readonly MaskingContract $masker,
+        private readonly bool $debug,
     ) {
-        $this->apiKey = $apiKey;
-        $this->projectId = $projectId;
-        $this->guzzle = $client;
-        $this->serverDataProvider = $serverDataProvider;
-        $this->languageDataProvider = $languageDataProvider;
-        $this->requestDataProvider = $requestDataProvider;
-        $this->responseDataProvider = $responseDataProvider;
-        $this->errorDataProvider = $errorDataProvider;
-        $this->debug = $debug;
+        $this->client = HttpClientDiscovery::find();
+        $this->requestFactory = Psr17FactoryDiscovery::findRequestFactory();
     }
 
     /**
      * Capture PHP errors.
+     *
+     * @param int $type
+     * @param string $message
+     * @param string $file
+     * @param int $line
+     * @return void
+     * @throws Throwable
      */
-    public function onError(int $type, string $message, string $file, int $line): bool
+    public function onError(int $type, string $message, string $file, int $line): void
     {
         try {
-            $this->errorDataProvider->addError(new Error(
-                'onError',
-                ErrorHelper::translateErrorType($type),
-                $message,
-                $file,
-                $line,
-            ));
-        } catch (\Throwable $throwable) {
+            $this->error->add(
+                error: new Error(
+                    source: 'onError',
+                    type: ErrorType::get(
+                        type: $type,
+                    ),
+                    message: $message,
+                    file: $file,
+                    line: $line,
+                ));
+        } catch (Throwable $throwable) {
             if ($this->debug) {
                 throw $throwable;
             }
         }
-
-        return false;
     }
 
     /**
      * Capture PHP exceptions.
+     *
+     * @param Throwable $exception
+     * @return void
+     * @throws Throwable
      */
-    public function onException(\Throwable $exception): void
+    public function onException(Throwable $exception): void
     {
         try {
-            $this->errorDataProvider->addError(new Error(
-                'onException',
-                'UNHANDLED_EXCEPTION',
-                $exception->getMessage(),
-                $exception->getFile(),
-                $exception->getLine(),
-            ));
-        } catch (\Throwable $throwable) {
+            $this->error->add(
+                error: new Error(
+                    source: 'onException',
+                    type: ErrorType::get(
+                        type: 0,
+                    ),
+                    message: $exception->getMessage(),
+                    file: $exception->getFile(),
+                    line: $exception->getLine(),
+                ),
+            );
+        } catch (Throwable $throwable) {
             if ($this->debug) {
                 throw $throwable;
             }
@@ -99,8 +119,9 @@ class Treblle
     }
 
     /**
-     * @throws \Throwable
+     * Build the request payload to send to Treblle.
      *
+     * @throws Throwable
      * @return array<int|string, mixed>
      */
     private function buildPayload(): array
@@ -112,14 +133,14 @@ class Treblle
                 'version' => self::SDK_VERSION,
                 'sdk' => self::SDK_NAME,
                 'data' => new Data(
-                    $this->serverDataProvider->getServer(),
-                    $this->languageDataProvider->getLanguage(),
-                    $this->requestDataProvider->getRequest(),
-                    $this->responseDataProvider->getResponse(),
-                    $this->errorDataProvider->getErrors()
+                    $this->server->get(),
+                    $this->language->get(),
+                    $this->request->get(),
+                    $this->response->get(),
+                    $this->error->get()
                 ),
             ];
-        } catch (\Throwable $throwable) {
+        } catch (Throwable $throwable) {
             if ($this->debug) {
                 throw $throwable;
             }
@@ -130,52 +151,54 @@ class Treblle
 
     /**
      * Process the log when PHP is finished processing.
+     *
+     * @return void
+     * @throws Throwable
+     * @throws JsonException
      */
     public function onShutdown(): void
     {
         try {
-            $payload = $this->buildPayload();
-            $payload = \Safe\json_encode($payload);
-        } catch (\Throwable $throwable) {
+            $payload = \Safe\json_encode(
+                value: $this->masker->mask(
+                    data: $this->buildPayload(),
+                ),
+                flags: JSON_THROW_ON_ERROR,
+            );
+        } catch (Throwable $throwable) {
             if ($this->debug) {
                 throw $throwable;
             }
 
-            /** @todo come up with some kind of fallback to be sent if we cannot convert array to json */
+            /**
+             * @todo come up with some kind of fallback to be sent if we cannot convert array to json
+             */
             $payload = [];
         }
 
         try {
-            $response = $this->guzzle->request(
-                'POST',
-                $this->getBaseUrl(),
-                [
-                    'connect_timeout' => 3,
-                    'timeout' => 3,
-                    'verify' => false,
-                    'http_errors' => false,
-                    'headers' => [
+            $this->client->sendRequest(
+                request: $this->requestFactory->createRequest(
+                    'POST',
+                    array_rand(Endpoint::cases())->value,
+                    $payload,
+                    [
                         'Content-Type' => 'application/json',
                         'x-api-key' => $this->apiKey,
                     ],
-                    'body' => $payload,
-                ]
+                ),
             );
-        } catch (\Throwable $throwable) {
+        } catch (Throwable $throwable) {
             if ($this->debug) {
                 throw $throwable;
             }
         }
     }
 
-    public function getBaseUrl(): string
+    public function setClient(HttpClient $client): Treblle
     {
-        $urls = [
-            'https://rocknrolla.treblle.com',
-            'https://punisher.treblle.com',
-            'https://sicario.treblle.com',
-        ];
+        $this->client = $client;
 
-        return $urls[array_rand($urls)];
+        return $this;
     }
 }
