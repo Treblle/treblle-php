@@ -1,6 +1,7 @@
-name: "CI"
+name: "Tests"
 
 on:
+  workflow_dispatch:
   pull_request:
   push:
     branches:
@@ -17,8 +18,8 @@ jobs:
           - "lowest"
           - "highest"
         php-version:
-          - "7.4"
-          - "8.0"
+          - "8.2"
+          - "8.1"
         operating-system:
           - "ubuntu-latest"
 
@@ -53,5 +54,5 @@ jobs:
       - name: "Validate Composer dependencies"
         run: "composer validate"
 
-      - name: "Run QC scripts"
-        run: "composer qc"
+      - name: "Run Test suite"
+        run: "composer test"
