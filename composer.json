@@ -41,7 +41,7 @@
         "php-http/client-common": "^2.6",
         "php-http/discovery": "^1.15.2",
         "php-http/mock-client": "^1.5",
-        "treblle/treblle-sdk-core": "0.0.2"
+        "treblle/treblle-sdk-core": "^0.0"
     },
     "require-dev": {
         "justinrainbow/json-schema": "^5.2.12",
