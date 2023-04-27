@@ -4,31 +4,23 @@ declare(strict_types=1);
 
 namespace Treblle\Factory;
 
-use GuzzleHttp\Client;
-use Treblle\InMemoryErrorDataProvider;
-use Treblle\OutputBufferingResponseDataProvider;
-use Treblle\PayloadAnonymizer;
-use Treblle\PhpHelper;
-use Treblle\PhpLanguageDataProvider;
-use Treblle\SuperglobalsRequestDataProvider;
-use Treblle\SuperglobalsServerDataProvider;
+use Treblle\Core\DataProviders\ErrorProvider;
+use Treblle\Core\DataProviders\GlobalRequestProvider;
+use Treblle\Core\DataProviders\GlobalServerProvider;
+use Treblle\Core\DataProviders\LanguageProvider;
+use Treblle\Core\DataProviders\OutputBufferResponseProvider;
+use Treblle\Core\Masking\FieldMasker;
+use Treblle\Core\Support\PHP;
 use Treblle\Treblle;
 
 final class TreblleFactory
 {
-    /**
-     * @param list<string> $maskedFields
-     * @param array<string, mixed> $config
-     */
     public static function create(
         string $apiKey,
         string $projectId,
-        bool $debug = false,
         array $maskedFields = [],
-        array $config = []
+        bool $debug = false,
     ): Treblle {
-        $phpHelper = new PhpHelper();
-        $errorDataProvider = new InMemoryErrorDataProvider();
         $defaultMaskedFields = [
             'password',
             'pwd',
@@ -40,19 +32,34 @@ final class TreblleFactory
             'ssn',
             'credit_score',
         ];
-        $maskedFields = array_unique(array_merge($defaultMaskedFields, $maskedFields));
-        $anonymizer = new PayloadAnonymizer($maskedFields);
+
+        $masker = new FieldMasker(
+            fields: array_merge(
+                $defaultMaskedFields,
+                $maskedFields,
+            ),
+        );
+
+        $error = new ErrorProvider();
+
 
         $treblle = new Treblle(
-            $apiKey,
-            $projectId,
-            $config['client'] ?? new Client(),
-            new SuperglobalsServerDataProvider(),
-            new PhpLanguageDataProvider($phpHelper),
-            new SuperglobalsRequestDataProvider($anonymizer),
-            new OutputBufferingResponseDataProvider($anonymizer, $errorDataProvider),
-            $errorDataProvider,
-            $debug
+            apiKey: $apiKey,
+            projectId: $projectId,
+            server: new GlobalServerProvider(),
+            language: new LanguageProvider(
+                php: new PHP(),
+            ),
+            request: new GlobalRequestProvider(
+                masker: $masker,
+            ),
+            response: new OutputBufferResponseProvider(
+                error: $error,
+                masker: $masker,
+            ),
+            error: $error,
+            masker: $masker,
+            debug: $debug,
         );
 
         set_error_handler([$treblle, 'onError']);
