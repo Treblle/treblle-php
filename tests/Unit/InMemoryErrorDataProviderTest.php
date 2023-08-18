@@ -10,6 +10,7 @@ use Treblle\Model\Error;
 
 /**
  * @internal
+ *
  * @coversNothing
  *
  * @small

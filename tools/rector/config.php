@@ -15,7 +15,7 @@ return static function (ContainerConfigurator $containerConfigurator): void {
     $parameters->set(Option::PATHS, [
         $basePath.'src',
     ]);
-//    $parameters->set(Option::PHP_VERSION_FEATURES, PhpVersion::PHP_80);
+    //    $parameters->set(Option::PHP_VERSION_FEATURES, PhpVersion::PHP_80);
     $parameters->set(Option::PHP_VERSION_FEATURES, PhpVersion::PHP_74);
     $parameters->set(Option::PHPSTAN_FOR_RECTOR_PATH, __DIR__.'/tools/phpstan/config.neon');
     $parameters->set(Option::SKIP, [
@@ -24,6 +24,6 @@ return static function (ContainerConfigurator $containerConfigurator): void {
     ]);
     $containerConfigurator->import(SetList::CODE_QUALITY);
     $containerConfigurator->import(SetList::PHP_74);
-//    $containerConfigurator->import(SetList::PHP_80);
+    //    $containerConfigurator->import(SetList::PHP_80);
     $containerConfigurator->import(SetList::TYPE_DECLARATION_STRICT);
 };
