@@ -44,6 +44,7 @@ return (new PhpCsFixer\Config())
         'not_operator_with_successor_space' => false,
         'ordered_interfaces' => true,
         'php_unit_size_class' => true,
+        'phpdoc_order' => ['order' => ['param', 'return', 'throws']],
         'phpdoc_to_return_type' => true,
         'static_lambda' => true,
 

@@ -10,6 +10,7 @@ use Treblle\PayloadAnonymizer;
 
 /**
  * @internal
+ *
  * @coversNothing
  *
  * @small
@@ -20,7 +21,8 @@ final class PayloadAnnonymizerTest extends TestCase
      * @param list<string> $fields
      * @param array<string, mixed> $data
      * @param array<string, mixed> $expected
-     * @dataProvider provideMaskingTestData
+     *
+     * @dataProvider provideIt_masks_fields_passed_as_argumentCases
      */
     public function test_it_masks_fields_passed_as_argument(array $fields, array $data, array $expected): void
     {
@@ -32,7 +34,7 @@ final class PayloadAnnonymizerTest extends TestCase
     /**
      * @return iterable<string, mixed>
      */
-    public function provideMaskingTestData(): iterable
+    public function provideIt_masks_fields_passed_as_argumentCases(): iterable
     {
         $fields = [
             'password',

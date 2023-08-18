@@ -9,6 +9,7 @@ use Treblle\PhpHelper;
 
 /**
  * @internal
+ *
  * @coversNothing
  *
  * @small

@@ -99,9 +99,9 @@ class Treblle
     }
 
     /**
-     * @throws \Throwable
-     *
      * @return array<int|string, mixed>
+     *
+     * @throws \Throwable
      */
     private function buildPayload(): array
     {

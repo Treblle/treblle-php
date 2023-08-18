@@ -26,6 +26,7 @@ use Treblle\Treblle;
 
 /**
  * @internal
+ *
  * @coversNothing
  *
  * @small
@@ -89,7 +90,7 @@ final class TreblleTest extends TestCase
         );
     }
 
-    public function provideTestData(): iterable
+    public function provideIt_correctly_serializes_request_data_on_shutdownCases(): iterable
     {
         yield 'request and response without errors' => [
             'server' => new Server(
@@ -279,7 +280,7 @@ final class TreblleTest extends TestCase
     }
 
     /**
-     * @dataProvider provideTestData
+     * @dataProvider provideIt_correctly_serializes_request_data_on_shutdownCases
      */
     public function test_it_correctly_serializes_request_data_on_shutdown(
         Server $server,
