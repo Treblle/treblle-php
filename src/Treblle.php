@@ -149,7 +149,7 @@ class Treblle
             $payload = '{}';
         }
 
-        if (!\function_exists('pcntl_fork')) {
+        if (!\function_exists('pcntl_fork') || (\defined('ARE_TESTS_RUNNING') && ARE_TESTS_RUNNING)) {
             $this->collectData($payload);
 
             return;

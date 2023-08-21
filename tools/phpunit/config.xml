@@ -10,6 +10,7 @@
 >
     <php>
         <ini name="error_reporting" value="-1"/>
+        <const name="ARE_TESTS_RUNNING" value="true"/>
     </php>
 
     <testsuites>
