@@ -13,6 +13,8 @@ use Treblle\Contract\ServerDataProvider;
 use Treblle\Model\Data;
 use Treblle\Model\Error;
 
+use function Safe\getmypid;
+
 /**
  * Create a FREE Treblle account => https://treblle.com/register.
  */
