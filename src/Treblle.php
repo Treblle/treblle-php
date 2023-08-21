@@ -146,7 +146,7 @@ class Treblle
             }
 
             /** @todo come up with some kind of fallback to be sent if we cannot convert array to json */
-            $payload = [];
+            $payload = '{}';
         }
 
         if (!\function_exists('pcntl_fork')) {
@@ -180,7 +180,7 @@ class Treblle
         return $urls[array_rand($urls)];
     }
 
-    private function collectData($payload): void
+    private function collectData(string $payload): void
     {
         try {
             $this->guzzle->request(
