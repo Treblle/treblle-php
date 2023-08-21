@@ -130,6 +130,8 @@ class Treblle
 
     /**
      * Process the log when PHP is finished processing.
+     *
+     * @throws \Throwable
      */
     public function onShutdown(): void
     {
@@ -145,8 +147,41 @@ class Treblle
             $payload = [];
         }
 
+        if (!\function_exists('pcntl_fork')) {
+            $this->collectData($payload);
+
+            return;
+        }
+
+        $pid = pcntl_fork();
+
+        if ($this->isUnableToForkProcess($pid)) {
+            $this->collectData($payload);
+
+            return;
+        }
+
+        if ($this->isChildProcess($pid)) {
+            $this->collectData($payload);
+            $this->killProcessWithId((int) getmypid());
+        }
+    }
+
+    public function getBaseUrl(): string
+    {
+        $urls = [
+            'https://rocknrolla.treblle.com',
+            'https://punisher.treblle.com',
+            'https://sicario.treblle.com',
+        ];
+
+        return $urls[array_rand($urls)];
+    }
+
+    private function collectData($payload): void
+    {
         try {
-            $response = $this->guzzle->request(
+            $this->guzzle->request(
                 'POST',
                 $this->getBaseUrl(),
                 [
@@ -168,14 +203,18 @@ class Treblle
         }
     }
 
-    public function getBaseUrl(): string
+    private function isChildProcess(int $pid): bool
     {
-        $urls = [
-            'https://rocknrolla.treblle.com',
-            'https://punisher.treblle.com',
-            'https://sicario.treblle.com',
-        ];
+        return $pid === 0;
+    }
 
-        return $urls[array_rand($urls)];
+    private function isUnableToForkProcess(int $pid): bool
+    {
+        return $pid === -1;
+    }
+
+    private function killProcessWithId(int $pid): void
+    {
+        mb_strtoupper(mb_substr(PHP_OS, 0, 3)) === 'WIN' ? exec("taskkill /F /T /PID {$pid}") : exec("kill -9 {$pid}");
     }
 }
