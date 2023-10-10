@@ -32,6 +32,7 @@ class Treblle
     private ResponseDataProvider $responseDataProvider;
     private ErrorDataProvider $errorDataProvider;
     private bool $debug;
+    private array $ignore;
 
     /**
      * Create a new Treblle instance.
@@ -45,7 +46,8 @@ class Treblle
         RequestDataProvider $requestDataProvider,
         ResponseDataProvider $responseDataProvider,
         ErrorDataProvider $errorDataProvider,
-        bool $debug
+        bool $debug,
+        array $ignore = []
     ) {
         $this->apiKey = $apiKey;
         $this->projectId = $projectId;
@@ -56,6 +58,7 @@ class Treblle
         $this->responseDataProvider = $responseDataProvider;
         $this->errorDataProvider = $errorDataProvider;
         $this->debug = $debug;
+        $this->ignore = $ignore;
     }
 
     /**
@@ -218,5 +221,10 @@ class Treblle
     private function killProcessWithId(int $pid): void
     {
         mb_strtoupper(mb_substr(PHP_OS, 0, 3)) === 'WIN' ? exec("taskkill /F /T /PID {$pid}") : exec("kill -9 {$pid}");
+    }
+
+    public function ignoredUris(): array
+    {
+        return $this->ignore;
     }
 }
