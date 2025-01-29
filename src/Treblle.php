@@ -12,7 +12,6 @@ use Treblle\Contract\ResponseDataProvider;
 use Treblle\Contract\ServerDataProvider;
 use Treblle\Model\Data;
 use Treblle\Model\Error;
-
 use function Safe\getmypid;
 
 /**
@@ -20,8 +19,8 @@ use function Safe\getmypid;
  */
 class Treblle
 {
-    private const SDK_VERSION = 0.8;
-    private const SDK_NAME = 'php';
+    protected const SDK_VERSION = 0.8;
+    protected const SDK_NAME = 'php';
 
     /**
      * Create a new Treblle instance.
