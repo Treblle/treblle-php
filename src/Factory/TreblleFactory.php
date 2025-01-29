@@ -57,9 +57,11 @@ final class TreblleFactory
             forkProcess: $config['fork_process'] ?? false,
         );
 
-        set_error_handler([$treblle, 'onError']);
-        set_exception_handler([$treblle, 'onException']);
-        register_shutdown_function([$treblle, 'onShutdown']);
+        if (! isset($config['dont_register_handlers'])) {
+            set_error_handler([$treblle, 'onError']);
+            set_exception_handler([$treblle, 'onException']);
+            register_shutdown_function([$treblle, 'onShutdown']);
+        }
 
         return $treblle;
     }
