@@ -131,24 +131,26 @@ class Treblle
             $payload = '{}';
         }
 
-        if (!\function_exists('pcntl_fork') || (\defined('ARE_TESTS_RUNNING') && ARE_TESTS_RUNNING)) {
-            $this->collectData($payload);
+        $this->collectData($payload);
 
-            return;
-        }
-
-        $pid = pcntl_fork();
-
-        if ($this->isUnableToForkProcess($pid)) {
-            $this->collectData($payload);
-
-            return;
-        }
-
-        if ($this->isChildProcess($pid)) {
-            $this->collectData($payload);
-            $this->killProcessWithId((int) getmypid());
-        }
+//        if (!\function_exists('pcntl_fork') || (\defined('ARE_TESTS_RUNNING') && ARE_TESTS_RUNNING)) {
+//            $this->collectData($payload);
+//
+//            return;
+//        }
+//
+//        $pid = pcntl_fork();
+//
+//        if ($this->isUnableToForkProcess($pid)) {
+//            $this->collectData($payload);
+//
+//            return;
+//        }
+//
+//        if ($this->isChildProcess($pid)) {
+//            $this->collectData($payload);
+//            $this->killProcessWithId((int) getmypid());
+//        }
     }
 
     public function getBaseUrl(): string
