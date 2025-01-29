@@ -21,6 +21,7 @@ final class Request implements \JsonSerializable
         private array $body,
         private array $raw,
         private ?string $route_path = null,
+        private array $query = [],
     ) {}
 
     /**
@@ -102,6 +103,16 @@ final class Request implements \JsonSerializable
     public function getRaw(): array
     {
         return $this->raw;
+    }
+
+    /**
+     * The COMPLETE request query data sent with this request.
+     *
+     * @return array<int|string, mixed>
+     */
+    public function getQuery(): array
+    {
+        return $this->query;
     }
 
     /**
