@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Treblle\Factory;
 
 use GuzzleHttp\Client;
+use Treblle\Contract\ResponseDataProvider;
 use Treblle\InMemoryErrorDataProvider;
 use Treblle\OutputBufferingResponseDataProvider;
 use Treblle\PayloadAnonymizer;
@@ -25,7 +26,8 @@ final class TreblleFactory
         string $projectId,
         bool $debug = false,
         array $maskedFields = [],
-        array $config = []
+        array $config = [],
+        ResponseDataProvider $responseDataProvider = null,
     ): Treblle {
         $phpHelper = new PhpHelper();
         $errorDataProvider = new InMemoryErrorDataProvider();
@@ -50,7 +52,7 @@ final class TreblleFactory
             new SuperglobalsServerDataProvider(),
             new PhpLanguageDataProvider($phpHelper),
             new SuperglobalsRequestDataProvider($anonymizer),
-            new OutputBufferingResponseDataProvider($anonymizer, $errorDataProvider),
+            $responseDataProvider ?? new OutputBufferingResponseDataProvider($anonymizer, $errorDataProvider),
             $errorDataProvider,
             $debug
         );
