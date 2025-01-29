@@ -37,7 +37,8 @@ class Treblle
         private ErrorDataProvider $errorDataProvider,
         private bool $debug,
         private array $ignore = [],
-        private ?string $url = null
+        private ?string $url = null,
+        private bool $forkProcess = false
     ) {}
 
     /**
@@ -131,26 +132,24 @@ class Treblle
             $payload = '{}';
         }
 
-        $this->collectData($payload);
+        if (!\function_exists('pcntl_fork') || false === $this->forkProcess) {
+            $this->collectData($payload);
 
-//        if (!\function_exists('pcntl_fork') || (\defined('ARE_TESTS_RUNNING') && ARE_TESTS_RUNNING)) {
-//            $this->collectData($payload);
-//
-//            return;
-//        }
-//
-//        $pid = pcntl_fork();
-//
-//        if ($this->isUnableToForkProcess($pid)) {
-//            $this->collectData($payload);
-//
-//            return;
-//        }
-//
-//        if ($this->isChildProcess($pid)) {
-//            $this->collectData($payload);
-//            $this->killProcessWithId((int) getmypid());
-//        }
+            return;
+        }
+
+        $pid = pcntl_fork();
+
+        if ($this->isUnableToForkProcess($pid)) {
+            $this->collectData($payload);
+
+            return;
+        }
+
+        if ($this->isChildProcess($pid)) {
+            $this->collectData($payload);
+            $this->killProcessWithId((int) getmypid());
+        }
     }
 
     public function getBaseUrl(): string

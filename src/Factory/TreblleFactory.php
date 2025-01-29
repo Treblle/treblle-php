@@ -54,6 +54,7 @@ final class TreblleFactory
             errorDataProvider: $errorDataProvider,
             debug: $debug,
             url: $config['url'] ?? null,
+            forkProcess: $config['fork_process'] ?? false,
         );
 
         set_error_handler([$treblle, 'onError']);
