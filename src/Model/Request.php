@@ -12,17 +12,16 @@ final class Request implements \JsonSerializable
      * @param array<int|string, mixed> $raw
      */
     public function __construct(
-        private string  $timestamp,
-        private string  $ip,
-        private string  $url,
-        private string  $user_agent,
-        private string  $method,
-        private array   $headers,
-        private array   $body,
-        private array   $raw,
+        private string $timestamp,
+        private string $ip,
+        private string $url,
+        private string $user_agent,
+        private string $method,
+        private array $headers,
+        private array $body,
+        private array $raw,
         private ?string $route_path = null,
-    ) {
-    }
+    ) {}
 
     /**
      * The timestamp should be generated at the time the request was made and should be in format of YYYY-MM-DD hh:mm:ss.
@@ -96,7 +95,7 @@ final class Request implements \JsonSerializable
     }
 
     /**
-     * Raw inputs passed to php://input
+     * Raw inputs passed to php://input.
      *
      * @return array<int|string, mixed>
      */

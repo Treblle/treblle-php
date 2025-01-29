@@ -9,14 +9,9 @@ use Safe\Exceptions\JsonException;
 use Treblle\Contract\RequestDataProvider;
 use Treblle\Model\Request;
 
-class SuperglobalsRequestDataProvider implements RequestDataProvider
+class SuperGlobalsRequestDataProvider implements RequestDataProvider
 {
-    private PayloadAnonymizer $anonymizer;
-
-    public function __construct(PayloadAnonymizer $anonymizer)
-    {
-        $this->anonymizer = $anonymizer;
-    }
+    public function __construct(private FieldMasker $masker) {}
 
     public function getRequest(): Request
     {
@@ -27,7 +22,7 @@ class SuperglobalsRequestDataProvider implements RequestDataProvider
             $this->getUserAgent(),
             $_SERVER['REQUEST_METHOD'] ?? null,
             \Safe\getallheaders(),
-            $this->anonymizer->annonymize($_REQUEST),
+            $this->masker->mask($_REQUEST),
             $this->getRawPayload(),
         );
     }
@@ -82,7 +77,7 @@ class SuperglobalsRequestDataProvider implements RequestDataProvider
         try {
             $rawBody = \Safe\json_decode(\Safe\file_get_contents('php://input'), true);
 
-            return $this->anonymizer->annonymize($rawBody);
+            return $this->masker->mask($rawBody);
         } catch (FilesystemException|JsonException $exception) {
             return [];
         }

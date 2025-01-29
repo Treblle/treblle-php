@@ -8,7 +8,7 @@ use Treblle\Contract\ServerDataProvider;
 use Treblle\Model\Os;
 use Treblle\Model\Server;
 
-class SuperglobalsServerDataProvider implements ServerDataProvider
+class SuperGlobalsServerDataProvider implements ServerDataProvider
 {
     public function getServer(): Server
     {

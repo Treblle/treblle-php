@@ -12,16 +12,16 @@ use Treblle\Model\Response;
 
 final class OutputBufferingResponseDataProvider implements ResponseDataProvider
 {
-    private PayloadAnonymizer $anonymizer;
+    private FieldMasker $fieldMasker;
     private ErrorDataProvider $errorDataProvider;
 
-    public function __construct(PayloadAnonymizer $anonymizer, ErrorDataProvider $errorDataProvider)
+    public function __construct(FieldMasker $fieldMasker, ErrorDataProvider $errorDataProvider)
     {
         if (ob_get_level() < 1) {
             throw new \RuntimeException('Output buffering must be enabled to collect responses. Have you called `ob_start()`?');
         }
 
-        $this->anonymizer = $anonymizer;
+        $this->fieldMasker = $fieldMasker;
         $this->errorDataProvider = $errorDataProvider;
     }
 
@@ -29,7 +29,7 @@ final class OutputBufferingResponseDataProvider implements ResponseDataProvider
     {
         $responseSize = ob_get_length() ?: 0;
         $responseBody = $this->getResponseBody($responseSize);
-        $responseBody = $this->anonymizer->annonymize($responseBody);
+        $responseBody = $this->fieldMasker->mask($responseBody);
         $responseCode = http_response_code() ?: null;
 
         return new Response(

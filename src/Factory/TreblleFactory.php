@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Treblle\Factory;
 
 use GuzzleHttp\Client;
+use Treblle\FieldMasker;
 use Treblle\InMemoryErrorDataProvider;
 use Treblle\OutputBufferingResponseDataProvider;
-use Treblle\PayloadAnonymizer;
 use Treblle\PhpHelper;
 use Treblle\PhpLanguageDataProvider;
-use Treblle\SuperglobalsRequestDataProvider;
-use Treblle\SuperglobalsServerDataProvider;
+use Treblle\SuperGlobalsRequestDataProvider;
+use Treblle\SuperGlobalsServerDataProvider;
 use Treblle\Treblle;
 
 final class TreblleFactory
@@ -41,16 +41,16 @@ final class TreblleFactory
             'credit_score',
         ];
         $maskedFields = array_unique(array_merge($defaultMaskedFields, $maskedFields));
-        $anonymizer = new PayloadAnonymizer($maskedFields);
+        $masker = new FieldMasker($maskedFields);
 
         $treblle = new Treblle(
             apiKey: $apiKey,
             projectId: $projectId,
             client: $config['client'] ?? new Client(),
-            serverDataProvider: new SuperglobalsServerDataProvider(),
+            serverDataProvider: new SuperGlobalsServerDataProvider(),
             languageDataProvider: new PhpLanguageDataProvider($phpHelper),
-            requestDataProvider: $config['request_provider'] ?? new SuperglobalsRequestDataProvider($anonymizer),
-            responseDataProvider: $config['response_provider'] ?? new OutputBufferingResponseDataProvider($anonymizer, $errorDataProvider),
+            requestDataProvider: $config['request_provider'] ?? new SuperGlobalsRequestDataProvider($masker),
+            responseDataProvider: $config['response_provider'] ?? new OutputBufferingResponseDataProvider($masker, $errorDataProvider),
             errorDataProvider: $errorDataProvider,
             debug: $debug,
             url: $config['url'] ?? null,
