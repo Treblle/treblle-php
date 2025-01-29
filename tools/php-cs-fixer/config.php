@@ -1,17 +1,19 @@
 <?php
 
 declare(strict_types=1);
+use PhpCsFixer\Config;
+use PhpCsFixer\Finder;
 
 $basePath = __DIR__.'/../../';
 
-$finder = (new PhpCsFixer\Finder())
+$finder = (new Finder())
     ->in([
         $basePath.'src',
         $basePath.'tests',
         $basePath.'tools',
     ]);
 
-return (new PhpCsFixer\Config())
+return (new Config())
     ->setCacheFile(__DIR__.'/tools/php-cs-fixer/.cache')
     ->setRiskyAllowed(true)
     ->setRules([

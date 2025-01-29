@@ -34,7 +34,7 @@ final class PayloadAnnonymizerTest extends TestCase
     /**
      * @return iterable<string, mixed>
      */
-    public function provideIt_masks_fields_passed_as_argumentCases(): iterable
+    public static function provideIt_masks_fields_passed_as_argumentCases(): iterable
     {
         $fields = [
             'password',

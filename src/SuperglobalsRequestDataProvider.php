@@ -83,7 +83,7 @@ final class SuperglobalsRequestDataProvider implements RequestDataProvider
             $rawBody = \Safe\json_decode(\Safe\file_get_contents('php://input'), true);
 
             return $this->anonymizer->annonymize($rawBody);
-        } catch (JsonException|FilesystemException $exception) {
+        } catch (FilesystemException|JsonException $exception) {
             return [];
         }
     }

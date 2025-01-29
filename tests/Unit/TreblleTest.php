@@ -90,7 +90,7 @@ final class TreblleTest extends TestCase
         );
     }
 
-    public function provideIt_correctly_serializes_request_data_on_shutdownCases(): iterable
+    public static function provideIt_correctly_serializes_request_data_on_shutdownCases(): iterable
     {
         yield 'request and response without errors' => [
             'server' => new Server(

@@ -23,43 +23,22 @@ class Treblle
     private const SDK_VERSION = 0.8;
     private const SDK_NAME = 'php';
 
-    private string $apiKey;
-    private string $projectId;
-    private ClientInterface $guzzle;
-    private ServerDataProvider $serverDataProvider;
-    private LanguageDataProvider $languageDataProvider;
-    private RequestDataProvider $requestDataProvider;
-    private ResponseDataProvider $responseDataProvider;
-    private ErrorDataProvider $errorDataProvider;
-    private bool $debug;
-    private array $ignore;
-
     /**
      * Create a new Treblle instance.
      */
     public function __construct(
-        string $apiKey,
-        string $projectId,
-        ClientInterface $client,
-        ServerDataProvider $serverDataProvider,
-        LanguageDataProvider $languageDataProvider,
-        RequestDataProvider $requestDataProvider,
-        ResponseDataProvider $responseDataProvider,
-        ErrorDataProvider $errorDataProvider,
-        bool $debug,
-        array $ignore = []
-    ) {
-        $this->apiKey = $apiKey;
-        $this->projectId = $projectId;
-        $this->guzzle = $client;
-        $this->serverDataProvider = $serverDataProvider;
-        $this->languageDataProvider = $languageDataProvider;
-        $this->requestDataProvider = $requestDataProvider;
-        $this->responseDataProvider = $responseDataProvider;
-        $this->errorDataProvider = $errorDataProvider;
-        $this->debug = $debug;
-        $this->ignore = $ignore;
-    }
+        private string $apiKey,
+        private string $projectId,
+        private ClientInterface $client,
+        private ServerDataProvider $serverDataProvider,
+        private LanguageDataProvider $languageDataProvider,
+        private RequestDataProvider $requestDataProvider,
+        private ResponseDataProvider $responseDataProvider,
+        private ErrorDataProvider $errorDataProvider,
+        private bool $debug,
+        private array $ignore = [],
+        private ?string $url = null
+    ) {}
 
     /**
      * Capture PHP errors.
@@ -180,13 +159,13 @@ class Treblle
             'https://sicario.treblle.com',
         ];
 
-        return $urls[array_rand($urls)];
+        return $this->url ?? $urls[array_rand($urls)];
     }
 
     private function collectData(string $payload): void
     {
         try {
-            $this->guzzle->request(
+            $this->client->request(
                 'POST',
                 $this->getBaseUrl(),
                 [

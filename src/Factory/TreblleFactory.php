@@ -52,7 +52,8 @@ final class TreblleFactory
             new SuperglobalsRequestDataProvider($anonymizer),
             $config['response_provider'] ?? new OutputBufferingResponseDataProvider($anonymizer, $errorDataProvider),
             $errorDataProvider,
-            $debug
+            $debug,
+            $config['url']
         );
 
         set_error_handler([$treblle, 'onError']);
