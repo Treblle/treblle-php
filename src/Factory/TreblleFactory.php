@@ -44,16 +44,16 @@ final class TreblleFactory
         $anonymizer = new PayloadAnonymizer($maskedFields);
 
         $treblle = new Treblle(
-            $apiKey,
-            $projectId,
-            $config['client'] ?? new Client(),
-            new SuperglobalsServerDataProvider(),
-            new PhpLanguageDataProvider($phpHelper),
-            new SuperglobalsRequestDataProvider($anonymizer),
-            $config['response_provider'] ?? new OutputBufferingResponseDataProvider($anonymizer, $errorDataProvider),
-            $errorDataProvider,
-            $debug,
-            $config['url']
+            apiKey: $apiKey,
+            projectId: $projectId,
+            client: $config['client'] ?? new Client(),
+            serverDataProvider: new SuperglobalsServerDataProvider(),
+            languageDataProvider: new PhpLanguageDataProvider($phpHelper),
+            requestDataProvider: new SuperglobalsRequestDataProvider($anonymizer),
+            responseDataProvider: $config['response_provider'] ?? new OutputBufferingResponseDataProvider($anonymizer, $errorDataProvider),
+            errorDataProvider: $errorDataProvider,
+            debug: $debug,
+            url: $config['url'] ?? null,
         );
 
         set_error_handler([$treblle, 'onError']);
