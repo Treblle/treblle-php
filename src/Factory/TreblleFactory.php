@@ -49,7 +49,7 @@ final class TreblleFactory
             client: $config['client'] ?? new Client(),
             serverDataProvider: new SuperglobalsServerDataProvider(),
             languageDataProvider: new PhpLanguageDataProvider($phpHelper),
-            requestDataProvider: new SuperglobalsRequestDataProvider($anonymizer),
+            requestDataProvider: $config['request_provider'] ?? new SuperglobalsRequestDataProvider($anonymizer),
             responseDataProvider: $config['response_provider'] ?? new OutputBufferingResponseDataProvider($anonymizer, $errorDataProvider),
             errorDataProvider: $errorDataProvider,
             debug: $debug,
