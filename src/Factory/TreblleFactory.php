@@ -51,7 +51,7 @@ final class TreblleFactory
             languageDataProvider: new PhpLanguageDataProvider($phpHelper),
             requestDataProvider: $config['request_provider'] ?? new SuperGlobalsRequestDataProvider($masker),
             responseDataProvider: $config['response_provider'] ?? new OutputBufferingResponseDataProvider($masker, $errorDataProvider),
-            errorDataProvider: $errorDataProvider,
+            errorDataProvider: $config['error_provider'] ?? $errorDataProvider,
             debug: $debug,
             url: $config['url'] ?? null,
             forkProcess: $config['fork_process'] ?? false,
