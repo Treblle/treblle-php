@@ -9,7 +9,7 @@ use Safe\Exceptions\JsonException;
 use Treblle\Contract\RequestDataProvider;
 use Treblle\Model\Request;
 
-final class SuperglobalsRequestDataProvider implements RequestDataProvider
+class SuperglobalsRequestDataProvider implements RequestDataProvider
 {
     private PayloadAnonymizer $anonymizer;
 
@@ -37,7 +37,7 @@ final class SuperglobalsRequestDataProvider implements RequestDataProvider
      *
      * @todo add option for trusted proxies.
      */
-    private function getClientIpAddress(): string
+    protected function getClientIpAddress(): string
     {
         if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
             $ip_address = $_SERVER['HTTP_CLIENT_IP'];
@@ -53,7 +53,7 @@ final class SuperglobalsRequestDataProvider implements RequestDataProvider
     /**
      * Get the current request endpoint url.
      */
-    private function getEndpointUrl(): string
+    protected function getEndpointUrl(): string
     {
         $protocol = $_SERVER['HTTPS'] ?? null !== 'off' ? 'https://' : 'http://';
 
@@ -63,7 +63,7 @@ final class SuperglobalsRequestDataProvider implements RequestDataProvider
     /**
      * Get the user agent.
      */
-    private function getUserAgent(): string
+    protected function getUserAgent(): string
     {
         $user_agent = '';
 
@@ -77,7 +77,7 @@ final class SuperglobalsRequestDataProvider implements RequestDataProvider
     /**
      * @return array<int|string, mixed>
      */
-    private function getRawPayload(): array
+    protected function getRawPayload(): array
     {
         try {
             $rawBody = \Safe\json_decode(\Safe\file_get_contents('php://input'), true);
