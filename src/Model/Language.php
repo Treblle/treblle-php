@@ -16,15 +16,11 @@ final class Language implements \JsonSerializable
      * If you can not get this value leave field empty.
      */
     private ?string $version;
-    private ?string $expose_php;
-    private ?string $display_errors;
 
-    public function __construct(?string $name, ?string $version, ?string $expose_php, ?string $display_errors)
+    public function __construct(?string $name, ?string $version)
     {
         $this->name = $name;
         $this->version = $version;
-        $this->expose_php = $expose_php;
-        $this->display_errors = $display_errors;
     }
 
     public function getName(): ?string
@@ -35,16 +31,6 @@ final class Language implements \JsonSerializable
     public function getVersion(): ?string
     {
         return $this->version;
-    }
-
-    public function getExposePhp(): ?string
-    {
-        return $this->expose_php;
-    }
-
-    public function getDisplayErrors(): ?string
-    {
-        return $this->display_errors;
     }
 
     /**

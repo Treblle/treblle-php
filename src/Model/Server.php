@@ -44,8 +44,6 @@ final class Server implements \JsonSerializable
      */
     private ?Os $os;
 
-    private ?string $encoding;
-
     public function __construct(
         ?string $ip,
         ?string $timezone,
@@ -53,7 +51,6 @@ final class Server implements \JsonSerializable
         ?string $signature,
         ?string $protocol,
         ?Os $os,
-        ?string $encoding
     ) {
         $this->ip = $ip;
         $this->timezone = $timezone;
@@ -61,7 +58,6 @@ final class Server implements \JsonSerializable
         $this->signature = $signature;
         $this->protocol = $protocol;
         $this->os = $os;
-        $this->encoding = $encoding;
     }
 
     public function getIp(): ?string
@@ -92,11 +88,6 @@ final class Server implements \JsonSerializable
     public function getProtocol(): ?string
     {
         return $this->protocol;
-    }
-
-    public function getEncoding(): ?string
-    {
-        return $this->encoding;
     }
 
     /**

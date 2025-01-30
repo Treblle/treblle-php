@@ -17,18 +17,18 @@ final class Response implements \JsonSerializable
      * The HTTP response code.
      * Source: https://www.restapitutorial.com/httpstatuscodes.html.
      */
-    private ?int $code;
+    private int $code;
 
     /**
      * The response size in bytes. This represent the total JSON response size in bytes. This can be pulled from
      * Headers but should always prefer language specific methods of getting the response size.
      */
-    private ?int $size;
+    private float $size;
 
     /**
-     * The load time of thee API response in microseconds.
+     * The load time of the API response in microseconds.
      */
-    private ?float $load_time;
+    private float $load_time;
 
     /**
      * The COMPLETE json response as returned by the server. This should ONLY be a VALID JSON and should be wrapped
@@ -42,7 +42,7 @@ final class Response implements \JsonSerializable
      * @param array<string, string> $headers
      * @param array<int|string, mixed> $body
      */
-    public function __construct(array $headers, ?int $code, ?int $size, ?float $load_time, array $body)
+    public function __construct(array $headers, int $code, float $size, float $load_time, array $body)
     {
         $this->headers = $headers;
         $this->code = $code;
@@ -59,17 +59,17 @@ final class Response implements \JsonSerializable
         return $this->headers;
     }
 
-    public function getCode(): ?int
+    public function getCode(): int
     {
         return $this->code;
     }
 
-    public function getSize(): ?int
+    public function getSize(): float
     {
         return $this->size;
     }
 
-    public function getLoadTime(): ?float
+    public function getLoadTime(): float
     {
         return $this->load_time;
     }
