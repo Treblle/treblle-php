@@ -8,42 +8,36 @@ use JsonSerializable;
 
 final class Os implements JsonSerializable
 {
+    public function __construct(
+        private ?string $name,
+        private ?string $release,
+        private ?string $architecture
+    ) {
+    }
+
     /**
      * The name of the server OS
      * Example: Linux, Windows...
      * If you can not get this value leave field empty.
      */
-    private ?string $name;
-
-    /**
-     * The version of the server OS
-     * If you can not get this value leave field empty.
-     */
-    private ?string $release;
-
-    /**
-     * Server architecture
-     * If you can not get this value leave field empty.
-     */
-    private ?string $architecture;
-
-    public function __construct(?string $name, ?string $release, ?string $architecture)
-    {
-        $this->name = $name;
-        $this->release = $release;
-        $this->architecture = $architecture;
-    }
-
     public function getName(): ?string
     {
         return $this->name;
     }
 
+    /**
+     * The version of the server OS
+     * If you can not get this value leave field empty.
+     */
     public function getRelease(): ?string
     {
         return $this->release;
     }
 
+    /**
+     * Server architecture
+     * If you can not get this value leave field empty.
+     */
     public function getArchitecture(): ?string
     {
         return $this->architecture;
