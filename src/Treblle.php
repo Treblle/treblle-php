@@ -5,14 +5,11 @@ declare(strict_types=1);
 namespace Treblle;
 
 use Throwable;
-use function Safe\getmypid;
-use function function_exists;
 use GuzzleHttp\ClientInterface;
 use Treblle\DataTransferObject\Data;
 use Treblle\DataTransferObject\Error;
 use Treblle\Contract\ErrorDataProvider;
 use Treblle\Contract\ServerDataProvider;
-
 use Treblle\Contract\RequestDataProvider;
 use Treblle\Contract\LanguageDataProvider;
 use Treblle\Contract\ResponseDataProvider;
@@ -38,7 +35,6 @@ final class Treblle
         private ResponseDataProvider $responseDataProvider,
         private ErrorDataProvider $errorDataProvider,
         private bool $debug,
-        private array $ignore = [],
         private ?string $url = null,
         private bool $forkProcess = false
     ) {
@@ -101,8 +97,7 @@ final class Treblle
                 throw $throwable;
             }
 
-            /** @todo come up with some kind of fallback to be sent if we cannot convert array to json */
-            $payload = '{}';
+            $payload = '{"error": "could not convert payload to valid json in sdk"}';
         }
 
         if (! function_exists('pcntl_fork') || false === $this->forkProcess) {
@@ -134,11 +129,6 @@ final class Treblle
         ];
 
         return $this->url ?? $urls[array_rand($urls)];
-    }
-
-    public function ignoredUris(): array
-    {
-        return $this->ignore;
     }
 
     /**
