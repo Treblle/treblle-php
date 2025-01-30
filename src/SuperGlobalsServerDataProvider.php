@@ -16,34 +16,16 @@ final class SuperGlobalsServerDataProvider implements ServerDataProvider
             $this->getServerVariable('SERVER_ADDR'),
             date_default_timezone_get(),
             $this->getServerVariable('SERVER_SOFTWARE'),
-            $this->getServerVariable('SERVER_SIGNATURE'),
-            $this->getServerVariable('SERVER_PROTOCOL'),
             new Os(
-                $this->getName(),
-                $this->getRelease(),
-                $this->getArchitecture()
+                PHP_OS,
+                php_uname('r'),
+                php_uname('m'),
             ),
-            $this->getServerVariable('HTTP_ACCEPT_ENCODING')
         );
     }
 
     private function getServerVariable(string $variable): ?string
     {
         return $_SERVER[$variable] ?? null;
-    }
-
-    private function getName(): string
-    {
-        return PHP_OS;
-    }
-
-    private function getRelease(): string
-    {
-        return php_uname('r');
-    }
-
-    private function getArchitecture(): string
-    {
-        return php_uname('m');
     }
 }
