@@ -11,31 +11,31 @@ final class Error implements \JsonSerializable
      * This is because in some languages erors can be thrown as exceptions, as regular errors or as shudown errors.
      * If your language doesn't have this paradigm simply set it to onError.
      */
-    private ?string $source;
+    private string $source;
 
     /**
      * Languages often have error types so if you can get.
      */
-    private ?string $type;
+    private string $type;
 
     /**
      * The error message as return to you.
      */
-    private ?string $message;
+    private string $message;
 
     /**
      * The name of the file that caused the error.
      * If you can not get this value leave field empty.
      */
-    private ?string $file;
+    private string $file;
 
     /**
-     * The exact line of code where the error happend.
+     * The exact line of code where the error happened.
      * If you can not get this value leave field empty.
      */
-    private ?int $line;
+    private int $line;
 
-    public function __construct(?string $source, ?string $type, ?string $message, ?string $file, ?int $line)
+    public function __construct(string $source, string $type, string $message, string $file, int $line)
     {
         $this->source = $source;
         $this->type = $type;
