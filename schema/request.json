@@ -20,7 +20,19 @@
         "server": {
           "type": "object",
           "properties": {
+            "ip": {
+              "type": "string"
+            },
             "timezone": {
+              "type": "string"
+            },
+            "software": {
+              "type": "string"
+            },
+            "signature": {
+              "type": "string"
+            },
+            "protocol": {
               "type": "string"
             },
             "os": {
@@ -35,34 +47,9 @@
                 "architecture": {
                   "type": "string"
                 }
-              },
-              "required": [
-                "name",
-                "release",
-                "architecture"
-              ]
-            },
-            "software": {
-              "type": "string"
-            },
-            "signature": {
-              "type": "string"
-            },
-            "protocol": {
-              "type": "string"
-            },
-            "encoding": {
-              "type": "string"
+              }
             }
-          },
-          "required": [
-            "timezone",
-            "os",
-            "software",
-            "signature",
-            "protocol",
-            "encoding"
-          ]
+          }
         },
         "language": {
           "type": "object",
@@ -72,19 +59,11 @@
             },
             "version": {
               "type": "string"
-            },
-            "expose_php": {
-              "type": "string"
-            },
-            "display_errors": {
-              "type": "string"
             }
           },
           "required": [
             "name",
-            "version",
-            "expose_php",
-            "display_errors"
+            "version"
           ]
         },
         "request": {
@@ -113,6 +92,12 @@
             },
             "raw": {
               "type": "object"
+            },
+            "route_path": {
+              "type": "string"
+            },
+            "query": {
+              "type": "object"
             }
           },
           "required": [
@@ -127,7 +112,31 @@
           ]
         },
         "response": {
-          "type": "object"
+          "type": "object",
+          "properties": {
+            "headers": {
+              "type": "object"
+            },
+            "code": {
+              "type": "integer"
+            },
+            "size": {
+              "type": "number"
+            },
+            "load_time": {
+              "type": "number"
+            },
+            "body": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "headers",
+            "code",
+            "size",
+            "load_time",
+            "body"
+          ]
         },
         "errors": {
           "type": "array",
