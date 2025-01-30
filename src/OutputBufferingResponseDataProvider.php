@@ -4,11 +4,8 @@ declare(strict_types=1);
 
 namespace Treblle;
 
-use function is_int;
+use Exception;
 use RuntimeException;
-use function is_array;
-use function is_string;
-use Safe\Exceptions\JsonException;
 use Treblle\DataTransferObject\Error;
 use Treblle\Contract\ErrorDataProvider;
 use Treblle\DataTransferObject\Response;
@@ -16,18 +13,13 @@ use Treblle\Contract\ResponseDataProvider;
 
 final class OutputBufferingResponseDataProvider implements ResponseDataProvider
 {
-    private FieldMasker $fieldMasker;
-
-    private ErrorDataProvider $errorDataProvider;
-
-    public function __construct(FieldMasker $fieldMasker, ErrorDataProvider $errorDataProvider)
-    {
+    public function __construct(
+        private FieldMasker       $fieldMasker,
+        private ErrorDataProvider $errorDataProvider
+    ) {
         if (ob_get_level() < 1) {
             throw new RuntimeException('Output buffering must be enabled to collect responses. Have you called `ob_start()`?');
         }
-
-        $this->fieldMasker = $fieldMasker;
-        $this->errorDataProvider = $errorDataProvider;
     }
 
     public function getResponse(): Response
@@ -84,11 +76,11 @@ final class OutputBufferingResponseDataProvider implements ResponseDataProvider
         if ($responseSize >= 2_000_000) {
             $this->errorDataProvider->addError(
                 new Error(
+                    'JSON response size is over 2MB',
+                    '',
+                    0,
                     'onShutdown',
                     'E_USER_ERROR',
-                    'JSON response size is over 2MB',
-                    null,
-                    null,
                 )
             );
 
@@ -101,15 +93,15 @@ final class OutputBufferingResponseDataProvider implements ResponseDataProvider
                 return [];
             }
 
-            return \Safe\json_decode($output, true);
-        } catch (JsonException $exception) {
+            return json_decode($output, true);
+        } catch (Exception $exception) {
             $this->errorDataProvider->addError(
                 new Error(
+                    'Invalid JSON format: ' . $exception->getMessage(),
+                    '',
+                    0,
                     'onShutdown',
                     'INVALID_JSON',
-                    'Invalid JSON format: ' . $exception->getMessage(),
-                    null,
-                    null,
                 )
             );
         }
