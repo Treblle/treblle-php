@@ -4,11 +4,6 @@ declare(strict_types=1);
 
 namespace Treblle;
 
-use function in_array;
-use function is_array;
-use function is_string;
-use function mb_strlen;
-
 final class FieldMasker
 {
     public function __construct(
