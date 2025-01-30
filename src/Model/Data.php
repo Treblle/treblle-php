@@ -20,6 +20,31 @@ final class Data implements JsonSerializable
     ) {
     }
 
+    public function getServer(): Server
+    {
+        return $this->server;
+    }
+
+    public function getLanguage(): Language
+    {
+        return $this->language;
+    }
+
+    public function getRequest(): Request
+    {
+        return $this->request;
+    }
+
+    public function getResponse(): Response
+    {
+        return $this->response;
+    }
+
+    public function getErrors(): array
+    {
+        return $this->errors;
+    }
+
     /**
      * @return array<string, mixed>
      */

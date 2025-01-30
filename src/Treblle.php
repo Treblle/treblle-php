@@ -51,11 +51,11 @@ final class Treblle
     {
         try {
             $this->errorDataProvider->addError(new Error(
-                'onError',
-                ErrorHelper::translateErrorType($type),
                 $message,
                 $file,
                 $line,
+                'onError',
+                ErrorHelper::translateErrorType($type),
             ));
         } catch (Throwable $throwable) {
             if ($this->debug) {
@@ -73,11 +73,11 @@ final class Treblle
     {
         try {
             $this->errorDataProvider->addError(new Error(
-                'onException',
-                'UNHANDLED_EXCEPTION',
                 $exception->getMessage(),
                 $exception->getFile(),
                 $exception->getLine(),
+                'onException',
+                'UNHANDLED_EXCEPTION',
             ));
         } catch (Throwable $throwable) {
             if ($this->debug) {
@@ -95,7 +95,7 @@ final class Treblle
     {
         try {
             $payload = $this->buildPayload();
-            $payload = \Safe\json_encode($payload);
+            $payload = json_encode($payload);
         } catch (Throwable $throwable) {
             if ($this->debug) {
                 throw $throwable;
