@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Treblle\Model;
 
-final class Server implements \JsonSerializable
+use JsonSerializable;
+
+final class Server implements JsonSerializable
 {
     /**
      * The IP address of the server.

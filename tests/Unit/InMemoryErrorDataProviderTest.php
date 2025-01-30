@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Treblle\Unit;
 
+use Treblle\Model\Error;
 use PHPUnit\Framework\TestCase;
 use Treblle\InMemoryErrorDataProvider;
-use Treblle\Model\Error;
 
 /**
  * @internal

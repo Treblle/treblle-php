@@ -5,7 +5,7 @@ declare(strict_types=1);
 use GuzzleHttp\Client;
 use Treblle\Factory\TreblleFactory;
 
-require_once __DIR__.'/../vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 ini_set('display_errors', 'Off');
 error_reporting(E_ALL);
@@ -16,12 +16,11 @@ ini_set('xdebug.var_display_max_data', '-1');
 ini_set('xdebug.var_display_max_depth', '-1');
 
 $treblle = TreblleFactory::create(
-    'Your API key',
-    'Your project ID',
-    true,
-    ['some_Value'],
-    [
+    apiKey: 'Your API key',
+    projectId: 'Your project ID',
+    debug: true,
+    maskedFields: ['some_Value'],
+    config: [
         'client' => new Client(),
-        'url' => getenv('URL') ?: null,
     ]
 );

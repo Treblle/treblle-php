@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Treblle\Model;
 
-final class Request implements \JsonSerializable
+use JsonSerializable;
+
+final class Request implements JsonSerializable
 {
     /**
      * @param array<string, string> $headers
@@ -22,10 +24,11 @@ final class Request implements \JsonSerializable
         private array $raw,
         private ?string $route_path = null,
         private array $query = [],
-    ) {}
+    ) {
+    }
 
     /**
-     * The timestamp should be generated at the time the request was made and should be in format of YYYY-MM-DD hh:mm:ss.
+     * The timestamp should be generated at the time the request was made and should be in format of Y-m-d H:i:s.
      */
     public function getTimestamp(): string
     {

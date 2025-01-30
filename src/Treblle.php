@@ -4,24 +4,26 @@ declare(strict_types=1);
 
 namespace Treblle;
 
-use GuzzleHttp\ClientInterface;
-use Treblle\Contract\ErrorDataProvider;
-use Treblle\Contract\LanguageDataProvider;
-use Treblle\Contract\RequestDataProvider;
-use Treblle\Contract\ResponseDataProvider;
-use Treblle\Contract\ServerDataProvider;
+use Throwable;
 use Treblle\Model\Data;
 use Treblle\Model\Error;
-
 use function Safe\getmypid;
+use function function_exists;
+use GuzzleHttp\ClientInterface;
+use Treblle\Contract\ErrorDataProvider;
+use Treblle\Contract\ServerDataProvider;
+
+use Treblle\Contract\RequestDataProvider;
+use Treblle\Contract\LanguageDataProvider;
+use Treblle\Contract\ResponseDataProvider;
 
 /**
  * Create a FREE Treblle account => https://treblle.com/register.
  */
-class Treblle
+final class Treblle
 {
-    protected const SDK_VERSION = 0.8;
-    protected const SDK_NAME = 'php';
+    private const SDK_VERSION = 0.8;
+    private const SDK_NAME = 'php';
 
     /**
      * Create a new Treblle instance.
@@ -39,7 +41,8 @@ class Treblle
         private array $ignore = [],
         private ?string $url = null,
         private bool $forkProcess = false
-    ) {}
+    ) {
+    }
 
     /**
      * Capture PHP errors.
@@ -54,7 +57,7 @@ class Treblle
                 $file,
                 $line,
             ));
-        } catch (\Throwable $throwable) {
+        } catch (Throwable $throwable) {
             if ($this->debug) {
                 throw $throwable;
             }
@@ -66,7 +69,7 @@ class Treblle
     /**
      * Capture PHP exceptions.
      */
-    public function onException(\Throwable $exception): void
+    public function onException(Throwable $exception): void
     {
         try {
             $this->errorDataProvider->addError(new Error(
@@ -76,54 +79,24 @@ class Treblle
                 $exception->getFile(),
                 $exception->getLine(),
             ));
-        } catch (\Throwable $throwable) {
+        } catch (Throwable $throwable) {
             if ($this->debug) {
                 throw $throwable;
             }
         }
-    }
-
-    /**
-     * @return array<int|string, mixed>
-     *
-     * @throws \Throwable
-     */
-    private function buildPayload(): array
-    {
-        try {
-            return [
-                'api_key' => $this->apiKey,
-                'project_id' => $this->projectId,
-                'version' => self::SDK_VERSION,
-                'sdk' => self::SDK_NAME,
-                'data' => new Data(
-                    $this->serverDataProvider->getServer(),
-                    $this->languageDataProvider->getLanguage(),
-                    $this->requestDataProvider->getRequest(),
-                    $this->responseDataProvider->getResponse(),
-                    $this->errorDataProvider->getErrors()
-                ),
-            ];
-        } catch (\Throwable $throwable) {
-            if ($this->debug) {
-                throw $throwable;
-            }
-        }
-
-        return [];
     }
 
     /**
      * Process the log when PHP is finished processing.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function onShutdown(): void
     {
         try {
             $payload = $this->buildPayload();
             $payload = \Safe\json_encode($payload);
-        } catch (\Throwable $throwable) {
+        } catch (Throwable $throwable) {
             if ($this->debug) {
                 throw $throwable;
             }
@@ -132,7 +105,7 @@ class Treblle
             $payload = '{}';
         }
 
-        if (!\function_exists('pcntl_fork') || false === $this->forkProcess) {
+        if (! function_exists('pcntl_fork') || false === $this->forkProcess) {
             $this->collectData($payload);
 
             return;
@@ -163,6 +136,41 @@ class Treblle
         return $this->url ?? $urls[array_rand($urls)];
     }
 
+    public function ignoredUris(): array
+    {
+        return $this->ignore;
+    }
+
+    /**
+     * @return array<int|string, mixed>
+     *
+     * @throws Throwable
+     */
+    private function buildPayload(): array
+    {
+        try {
+            return [
+                'api_key' => $this->apiKey,
+                'project_id' => $this->projectId,
+                'version' => self::SDK_VERSION,
+                'sdk' => self::SDK_NAME,
+                'data' => new Data(
+                    $this->serverDataProvider->getServer(),
+                    $this->languageDataProvider->getLanguage(),
+                    $this->requestDataProvider->getRequest(),
+                    $this->responseDataProvider->getResponse(),
+                    $this->errorDataProvider->getErrors()
+                ),
+            ];
+        } catch (Throwable $throwable) {
+            if ($this->debug) {
+                throw $throwable;
+            }
+        }
+
+        return [];
+    }
+
     private function collectData(string $payload): void
     {
         try {
@@ -181,7 +189,7 @@ class Treblle
                     'body' => $payload,
                 ]
             );
-        } catch (\Throwable $throwable) {
+        } catch (Throwable $throwable) {
             if ($this->debug) {
                 throw $throwable;
             }
@@ -190,21 +198,16 @@ class Treblle
 
     private function isChildProcess(int $pid): bool
     {
-        return $pid === 0;
+        return 0 === $pid;
     }
 
     private function isUnableToForkProcess(int $pid): bool
     {
-        return $pid === -1;
+        return -1 === $pid;
     }
 
     private function killProcessWithId(int $pid): void
     {
-        mb_strtoupper(mb_substr(PHP_OS, 0, 3)) === 'WIN' ? exec("taskkill /F /T /PID {$pid}") : exec("kill -9 {$pid}");
-    }
-
-    public function ignoredUris(): array
-    {
-        return $this->ignore;
+        'WIN' === mb_strtoupper(mb_substr(PHP_OS, 0, 3)) ? exec("taskkill /F /T /PID {$pid}") : exec("kill -9 {$pid}");
     }
 }

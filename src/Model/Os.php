@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Treblle\Model;
 
-final class Os implements \JsonSerializable
+use JsonSerializable;
+
+final class Os implements JsonSerializable
 {
     /**
      * The name of the server OS

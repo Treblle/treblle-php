@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Treblle\Model;
 
-final class Language implements \JsonSerializable
+use JsonSerializable;
+
+final class Language implements JsonSerializable
 {
     /**
      * The language name should be one of the following: php, net, ruby, js, python.

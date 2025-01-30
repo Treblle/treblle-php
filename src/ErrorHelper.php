@@ -55,6 +55,6 @@ final class ErrorHelper
                 return 'E_USER_DEPRECATED';
         }
 
-        return 'Unknown: '.(string) $type;
+        return 'Unknown: ' . (string) $type;
     }
 }

@@ -4,25 +4,25 @@ declare(strict_types=1);
 
 namespace Tests\Treblle\Unit;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Handler\MockHandler;
-use GuzzleHttp\HandlerStack;
-use GuzzleHttp\Middleware;
-use JsonSchema\Validator;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
-use Treblle\Contract\ErrorDataProvider;
-use Treblle\Contract\LanguageDataProvider;
-use Treblle\Contract\RequestDataProvider;
-use Treblle\Contract\ResponseDataProvider;
-use Treblle\Contract\ServerDataProvider;
-use Treblle\Model\Error;
-use Treblle\Model\Language;
-use Treblle\Model\Os;
-use Treblle\Model\Request;
-use Treblle\Model\Response;
-use Treblle\Model\Server;
 use Treblle\Treblle;
+use Treblle\Model\Os;
+use GuzzleHttp\Client;
+use Treblle\Model\Error;
+use JsonSchema\Validator;
+use Treblle\Model\Server;
+use GuzzleHttp\Middleware;
+use Treblle\Model\Request;
+use Treblle\Model\Language;
+use Treblle\Model\Response;
+use GuzzleHttp\HandlerStack;
+use PHPUnit\Framework\TestCase;
+use GuzzleHttp\Handler\MockHandler;
+use Treblle\Contract\ErrorDataProvider;
+use Treblle\Contract\ServerDataProvider;
+use Treblle\Contract\RequestDataProvider;
+use Treblle\Contract\LanguageDataProvider;
+use Treblle\Contract\ResponseDataProvider;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @internal
@@ -63,7 +63,7 @@ final class TreblleTest extends TestCase
         parent::setUp();
 
         $this->validator = new Validator();
-        $this->schemaPath = __DIR__.'/../../schema/request.json';
+        $this->schemaPath = __DIR__ . '/../../schema/request.json';
 
         $this->mockHandler = new MockHandler([]);
         $history = Middleware::history($this->container);
@@ -317,13 +317,13 @@ final class TreblleTest extends TestCase
         $this->assertEquals(\Safe\json_decode($requestBody, true), $expectedRequest);
 
         $requestBody = \Safe\json_decode($requestBody);
-        $this->validator->validate($requestBody, (object) ['$ref' => 'file://'.realpath($this->schemaPath)]);
+        $this->validator->validate($requestBody, (object) ['$ref' => 'file://' . realpath($this->schemaPath)]);
 
         $this->assertTrue(
             $this->validator->isValid(),
             array_reduce(
                 $this->validator->getErrors(),
-                static fn (string $carry, array $error) => $carry."\n".\Safe\json_encode($error),
+                static fn (string $carry, array $error) => $carry . "\n" . \Safe\json_encode($error),
                 ''
             )
         );

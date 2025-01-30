@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Treblle;
 
-use Treblle\Contract\ServerDataProvider;
 use Treblle\Model\Os;
 use Treblle\Model\Server;
+use Treblle\Contract\ServerDataProvider;
 
-class SuperGlobalsServerDataProvider implements ServerDataProvider
+final class SuperGlobalsServerDataProvider implements ServerDataProvider
 {
     public function getServer(): Server
     {

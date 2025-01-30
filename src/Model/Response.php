@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Treblle\Model;
 
-final class Response implements \JsonSerializable
+use JsonSerializable;
+
+final class Response implements JsonSerializable
 {
     /**
      * Response headers in key:value (json_encoded) format as shown below.

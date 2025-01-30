@@ -4,21 +4,26 @@ declare(strict_types=1);
 
 namespace Treblle;
 
+use function is_int;
+use RuntimeException;
+use function is_array;
+use function is_string;
+use Treblle\Model\Error;
+use Treblle\Model\Response;
 use Safe\Exceptions\JsonException;
 use Treblle\Contract\ErrorDataProvider;
 use Treblle\Contract\ResponseDataProvider;
-use Treblle\Model\Error;
-use Treblle\Model\Response;
 
 final class OutputBufferingResponseDataProvider implements ResponseDataProvider
 {
     private FieldMasker $fieldMasker;
+
     private ErrorDataProvider $errorDataProvider;
 
     public function __construct(FieldMasker $fieldMasker, ErrorDataProvider $errorDataProvider)
     {
         if (ob_get_level() < 1) {
-            throw new \RuntimeException('Output buffering must be enabled to collect responses. Have you called `ob_start()`?');
+            throw new RuntimeException('Output buffering must be enabled to collect responses. Have you called `ob_start()`?');
         }
 
         $this->fieldMasker = $fieldMasker;
@@ -34,7 +39,7 @@ final class OutputBufferingResponseDataProvider implements ResponseDataProvider
 
         return new Response(
             $this->getResponseHeaders(),
-            \is_int($responseCode) ? $responseCode : null,
+            is_int($responseCode) ? $responseCode : null,
             $responseSize,
             $this->getLoadTime(),
             $responseBody,
@@ -49,7 +54,7 @@ final class OutputBufferingResponseDataProvider implements ResponseDataProvider
         $data = [];
         $headers = headers_list();
 
-        if (\is_array($headers) && !empty($headers)) {
+        if (is_array($headers) && ! empty($headers)) {
             foreach ($headers as $header) {
                 $header = explode(':', $header);
                 $data[array_shift($header)] = trim(implode(':', $header));
@@ -92,7 +97,7 @@ final class OutputBufferingResponseDataProvider implements ResponseDataProvider
 
         try {
             $output = ob_get_flush();
-            if (!\is_string($output)) {
+            if (! is_string($output)) {
                 return [];
             }
 
@@ -102,7 +107,7 @@ final class OutputBufferingResponseDataProvider implements ResponseDataProvider
                 new Error(
                     'onShutdown',
                     'INVALID_JSON',
-                    'Invalid JSON format: '.$exception->getMessage(),
+                    'Invalid JSON format: ' . $exception->getMessage(),
                     null,
                     null,
                 )

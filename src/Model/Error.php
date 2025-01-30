@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Treblle\Model;
 
-final class Error implements \JsonSerializable
+use JsonSerializable;
+
+final class Error implements JsonSerializable
 {
     /**
      * The values can be onError, onException, onShutdown
