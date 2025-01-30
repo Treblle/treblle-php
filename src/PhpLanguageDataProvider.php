@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Treblle;
 
-use Treblle\Model\Language;
+use Treblle\DataTransferObject\Language;
 use Treblle\Contract\LanguageDataProvider;
 
 final class PhpLanguageDataProvider implements LanguageDataProvider

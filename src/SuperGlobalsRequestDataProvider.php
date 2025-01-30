@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Treblle;
 
-use Treblle\Model\Request;
 use Safe\Exceptions\JsonException;
+use Treblle\DataTransferObject\Request;
 use Safe\Exceptions\FilesystemException;
 use Treblle\Contract\RequestDataProvider;
 

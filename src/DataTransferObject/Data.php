@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Treblle\Model;
+namespace Treblle\DataTransferObject;
 
 use JsonSerializable;
 

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Treblle;
 
-use Treblle\Model\Os;
-use Treblle\Model\Server;
+use Treblle\DataTransferObject\Os;
+use Treblle\DataTransferObject\Server;
 use Treblle\Contract\ServerDataProvider;
 
 final class SuperGlobalsServerDataProvider implements ServerDataProvider

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Treblle;
 
-use Treblle\Model\Error;
+use Treblle\DataTransferObject\Error;
 use Treblle\Contract\ErrorDataProvider;
 
 final class InMemoryErrorDataProvider implements ErrorDataProvider

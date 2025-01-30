@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Treblle;
 
 use Throwable;
-use Treblle\Model\Data;
-use Treblle\Model\Error;
 use function Safe\getmypid;
 use function function_exists;
 use GuzzleHttp\ClientInterface;
+use Treblle\DataTransferObject\Data;
+use Treblle\DataTransferObject\Error;
 use Treblle\Contract\ErrorDataProvider;
 use Treblle\Contract\ServerDataProvider;
 

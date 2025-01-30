@@ -8,10 +8,10 @@ use function is_int;
 use RuntimeException;
 use function is_array;
 use function is_string;
-use Treblle\Model\Error;
-use Treblle\Model\Response;
 use Safe\Exceptions\JsonException;
+use Treblle\DataTransferObject\Error;
 use Treblle\Contract\ErrorDataProvider;
+use Treblle\DataTransferObject\Response;
 use Treblle\Contract\ResponseDataProvider;
 
 final class OutputBufferingResponseDataProvider implements ResponseDataProvider
