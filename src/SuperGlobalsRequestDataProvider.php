@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace Treblle;
 
-use Safe\Exceptions\JsonException;
+use Exception;
 use Treblle\DataTransferObject\Request;
-use Safe\Exceptions\FilesystemException;
 use Treblle\Contract\RequestDataProvider;
 
 final class SuperGlobalsRequestDataProvider implements RequestDataProvider
@@ -18,12 +17,12 @@ final class SuperGlobalsRequestDataProvider implements RequestDataProvider
     public function getRequest(): Request
     {
         return new Request(
-            \Safe\gmdate('Y-m-d H:i:s'),
+            gmdate('Y-m-d H:i:s'),
             $this->getClientIpAddress(),
             $this->getEndpointUrl(),
             $this->getUserAgent(),
             $_SERVER['REQUEST_METHOD'] ?? null,
-            \Safe\getallheaders(),
+            getallheaders(),
             $this->masker->mask($_REQUEST),
             $this->getRawPayload(),
         );
@@ -77,10 +76,10 @@ final class SuperGlobalsRequestDataProvider implements RequestDataProvider
     private function getRawPayload(): array
     {
         try {
-            $rawBody = \Safe\json_decode(\Safe\file_get_contents('php://input'), true);
+            $rawBody = json_decode(file_get_contents('php://input'), true);
 
             return $this->masker->mask($rawBody);
-        } catch (FilesystemException|JsonException $exception) {
+        } catch (Exception) {
             return [];
         }
     }
