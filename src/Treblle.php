@@ -142,8 +142,8 @@ final class Treblle
             return [
                 'api_key' => $this->apiKey,
                 'project_id' => $this->projectId,
-                'version' => self::SDK_VERSION,
                 'sdk' => self::SDK_NAME,
+                'version' => self::SDK_VERSION,
                 'data' => new Data(
                     $this->serverDataProvider->getServer(),
                     $this->languageDataProvider->getLanguage(),

@@ -14,7 +14,6 @@ final class SuperGlobalsServerDataProvider implements ServerDataProvider
     {
         return new Server(
             ip: $this->getServerVariable('SERVER_ADDR') ?? 'bogon',
-            timezone: date_default_timezone_get(),
             software: $this->getServerVariable('SERVER_SOFTWARE'),
             protocol: $this->getServerVariable('SERVER_PROTOCOL'),
             os: new Os(
@@ -22,6 +21,7 @@ final class SuperGlobalsServerDataProvider implements ServerDataProvider
                 php_uname('r'),
                 php_uname('m'),
             ),
+            timezone: date_default_timezone_get(),
         );
     }
 

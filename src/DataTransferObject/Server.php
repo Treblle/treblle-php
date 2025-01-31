@@ -9,11 +9,11 @@ use JsonSerializable;
 final class Server implements JsonSerializable
 {
     public function __construct(
-        private ?string $ip,
-        private ?string $timezone,
-        private ?string $software,
-        private ?string $protocol,
-        private ?Os     $os,
+        private string  $ip = 'bogon',
+        private string  $timezone = 'UTC',
+        private ?string $software = null,
+        private ?string $protocol = null,
+        private Os      $os = new Os(),
     ) {
     }
 

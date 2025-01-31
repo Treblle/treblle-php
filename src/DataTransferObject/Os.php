@@ -9,9 +9,9 @@ use JsonSerializable;
 final class Os implements JsonSerializable
 {
     public function __construct(
-        private ?string $name,
-        private ?string $release,
-        private ?string $architecture
+        private readonly ?string $name = null,
+        private readonly ?string $release = null,
+        private readonly ?string $architecture = null,
     ) {
     }
 

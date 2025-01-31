@@ -12,11 +12,11 @@ final class Data implements JsonSerializable
      * @param list<Error> $errors
      */
     public function __construct(
-        private Server   $server,
-        private Language $language,
-        private Request  $request,
-        private Response $response,
-        private array    $errors
+        private readonly Server   $server,
+        private readonly Language $language,
+        private readonly Request  $request,
+        private readonly Response $response,
+        private readonly array $errors
     ) {
     }
 
@@ -40,6 +40,9 @@ final class Data implements JsonSerializable
         return $this->response;
     }
 
+    /**
+     * @return list<Error> $errors
+     */
     public function getErrors(): array
     {
         return $this->errors;
