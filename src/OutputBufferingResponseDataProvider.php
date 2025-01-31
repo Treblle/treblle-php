@@ -30,11 +30,11 @@ final class OutputBufferingResponseDataProvider implements ResponseDataProvider
         $responseCode = http_response_code() ?: null;
 
         return new Response(
-            $this->getResponseHeaders(),
-            is_int($responseCode) ? $responseCode : null,
-            $responseSize,
-            $this->getLoadTime(),
-            $responseBody,
+            code: is_int($responseCode) ? $responseCode : 200,
+            size: $responseSize,
+            load_time: $this->getLoadTime(),
+            body: $responseBody,
+            headers: $this->getResponseHeaders(),
         );
     }
 

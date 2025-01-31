@@ -6,14 +6,14 @@ namespace Treblle\DataTransferObject;
 
 use JsonSerializable;
 
-final class Response implements JsonSerializable
+final readonly class Response implements JsonSerializable
 {
     public function __construct(
-        private array $headers,
-        private int $code,
-        private float $size,
-        private float $load_time,
-        private array $body
+        private int $code = 200, // TODO: default to something that can be identified easily
+        private float $size = 0.0,
+        private float $load_time = 0.0,
+        private array $body = [],
+        private array $headers = [],
     ) {
     }
 
