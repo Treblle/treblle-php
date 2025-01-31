@@ -13,10 +13,11 @@ final class SuperGlobalsServerDataProvider implements ServerDataProvider
     public function getServer(): Server
     {
         return new Server(
-            $this->getServerVariable('SERVER_ADDR'),
-            date_default_timezone_get(),
-            $this->getServerVariable('SERVER_SOFTWARE'),
-            new Os(
+            ip: $this->getServerVariable('SERVER_ADDR'),
+            timezone: date_default_timezone_get(),
+            software: $this->getServerVariable('SERVER_SOFTWARE'),
+            protocol: $this->getServerVariable('SERVER_PROTOCOL'),
+            os: new Os(
                 PHP_OS,
                 php_uname('r'),
                 php_uname('m'),

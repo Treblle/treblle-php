@@ -17,14 +17,14 @@ final class SuperGlobalsRequestDataProvider implements RequestDataProvider
     public function getRequest(): Request
     {
         return new Request(
-            gmdate('Y-m-d H:i:s'),
-            $this->getClientIpAddress(),
-            $this->getEndpointUrl(),
-            $this->getUserAgent(),
-            $_SERVER['REQUEST_METHOD'] ?? null,
-            getallheaders(),
-            $this->masker->mask($_REQUEST),
-            $this->getRawPayload(),
+            timestamp: gmdate('Y-m-d H:i:s'),
+            ip: $this->getClientIpAddress(),
+            url: $this->getEndpointUrl(),
+            user_agent: $this->getUserAgent(),
+            method: $_SERVER['REQUEST_METHOD'] ?? null,
+            headers: getallheaders(),
+            body: $this->masker->mask($_REQUEST),
+            raw: $this->getRawPayload(),
         );
     }
 
@@ -78,7 +78,7 @@ final class SuperGlobalsRequestDataProvider implements RequestDataProvider
         try {
             $rawBody = json_decode(file_get_contents('php://input'), true);
 
-            return $this->masker->mask($rawBody);
+            return $this->masker->mask($rawBody ?? []);
         } catch (Exception) {
             return [];
         }
