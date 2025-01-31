@@ -6,7 +6,7 @@ namespace Treblle\DataTransferObject;
 
 use JsonSerializable;
 
-final class Error implements JsonSerializable
+final readonly class Error implements JsonSerializable
 {
     public function __construct(
         private string $message,
