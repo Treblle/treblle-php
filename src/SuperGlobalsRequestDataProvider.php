@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Treblle;
 
-use Exception;
 use Treblle\DataTransferObject\Request;
 use Treblle\Contract\RequestDataProvider;
 
@@ -21,10 +20,9 @@ final class SuperGlobalsRequestDataProvider implements RequestDataProvider
             ip: $this->getClientIpAddress(),
             url: $this->getEndpointUrl(),
             user_agent: $this->getUserAgent(),
-            method: $_SERVER['REQUEST_METHOD'] ?? null,
+            method: $_SERVER['REQUEST_METHOD'] ?? 'GET',
             headers: getallheaders(),
             body: $this->masker->mask($_REQUEST),
-            raw: $this->getRawPayload(),
         );
     }
 
@@ -63,24 +61,10 @@ final class SuperGlobalsRequestDataProvider implements RequestDataProvider
     {
         $user_agent = '';
 
-        if (isset($_SERVER['HTTP_USER_AGENT']) && ! empty($_SERVER['HTTP_USER_AGENT'])) {
+        if (! empty($_SERVER['HTTP_USER_AGENT'])) {
             $user_agent = $_SERVER['HTTP_USER_AGENT'];
         }
 
         return $user_agent;
-    }
-
-    /**
-     * @return array<int|string, mixed>
-     */
-    private function getRawPayload(): array
-    {
-        try {
-            $rawBody = json_decode(file_get_contents('php://input'), true);
-
-            return $this->masker->mask($rawBody ?? []);
-        } catch (Exception) {
-            return [];
-        }
     }
 }

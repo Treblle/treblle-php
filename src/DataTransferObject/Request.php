@@ -11,7 +11,6 @@ final class Request implements JsonSerializable
     /**
      * @param array<string, string> $headers
      * @param array<int|string, mixed> $body
-     * @param array<int|string, mixed> $raw
      */
     public function __construct(
         private string $timestamp,
@@ -21,7 +20,6 @@ final class Request implements JsonSerializable
         private string $method,
         private array $headers,
         private array $body,
-        private array $raw,
         private ?string $route_path = null,
         private array $query = [],
     ) {
@@ -69,7 +67,9 @@ final class Request implements JsonSerializable
     }
 
     /**
-     * The HTTP method for the request. Should be uppercased if possible.
+     * The HTTP method for the request.
+     * Should be uppercased if possible.
+     * default is GET
      */
     public function getMethod(): string
     {
@@ -96,16 +96,6 @@ final class Request implements JsonSerializable
     public function getBody(): array
     {
         return $this->body;
-    }
-
-    /**
-     * Raw inputs passed to php://input.
-     *
-     * @return array<int|string, mixed>
-     */
-    public function getRaw(): array
-    {
-        return $this->raw;
     }
 
     /**
