@@ -29,18 +29,18 @@ final class SuperGlobalsRequestDataProvider implements RequestDataProvider
     }
 
     /**
-     * Get the IP address of the requester.
+     * Get the IP address of the requester if cannot get it return bogon.
      *
      * @todo add option for trusted proxies.
      */
     private function getClientIpAddress(): string
     {
+        $ip_address = $_SERVER['REMOTE_ADDR'] ?? 'bogon';
+
         if (! empty($_SERVER['HTTP_CLIENT_IP'])) {
             $ip_address = $_SERVER['HTTP_CLIENT_IP'];
         } elseif (! empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
             $ip_address = $_SERVER['HTTP_X_FORWARDED_FOR'];
-        } else {
-            $ip_address = $_SERVER['REMOTE_ADDR'];
         }
 
         return $ip_address;
