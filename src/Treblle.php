@@ -19,8 +19,9 @@ use Treblle\Contract\ResponseDataProvider;
  */
 final class Treblle
 {
-    private const SDK_VERSION = 0.8;
-    private const SDK_NAME = 'php';
+    private static float $sdkVersion = 4.0;
+
+    private static string $sdkName = 'php';
 
     /**
      * Create a new Treblle instance.
@@ -142,8 +143,8 @@ final class Treblle
             return [
                 'api_key' => $this->apiKey,
                 'project_id' => $this->projectId,
-                'sdk' => self::SDK_NAME,
-                'version' => self::SDK_VERSION,
+                'sdk' => self::$sdkName,
+                'version' => self::$sdkVersion,
                 'data' => new Data(
                     $this->serverDataProvider->getServer(),
                     $this->languageDataProvider->getLanguage(),
