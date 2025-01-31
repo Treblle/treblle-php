@@ -19,9 +19,9 @@ use Treblle\Contract\ResponseDataProvider;
  */
 final class Treblle
 {
-    private static float $sdkVersion = 4.0;
+    public static float $sdkVersion = 4.0;
 
-    private static string $sdkName = 'php';
+    public static string $sdkName = 'php';
 
     /**
      * Create a new Treblle instance.
