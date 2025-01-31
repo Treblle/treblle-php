@@ -12,6 +12,7 @@ final class Server implements JsonSerializable
         private ?string $ip,
         private ?string $timezone,
         private ?string $software,
+        private ?string $protocol,
         private ?Os     $os,
     ) {
     }
@@ -43,6 +44,15 @@ final class Server implements JsonSerializable
     public function getSoftware(): ?string
     {
         return $this->software;
+    }
+
+    /**
+     * We are looking here for HTTP protocol or to be more exact we are trying to see if the HTTP version of the
+     * server is HTTP 2. All you need to do is get the HTTP version if it's applicable to your server. If not leave empty.
+     */
+    public function getProtocol(): ?string
+    {
+        return $this->protocol;
     }
 
     /**
