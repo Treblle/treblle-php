@@ -6,7 +6,7 @@ namespace Treblle\DataTransferObject;
 
 use JsonSerializable;
 
-final class Request implements JsonSerializable
+final readonly class Request implements JsonSerializable
 {
     /**
      * @param array<string, string> $headers
@@ -14,19 +14,19 @@ final class Request implements JsonSerializable
      */
     public function __construct(
         private string $timestamp,
-        private string $ip,
         private string $url,
-        private string $user_agent,
-        private string $method,
-        private array $headers,
-        private array $body,
-        private ?string $route_path = null,
+        private string $ip = 'bogon',
+        private string $user_agent = '',
+        private string $method = 'GET',
+        private array  $headers = [],
         private array $query = [],
+        private array $body = [],
+        private ?string $route_path = null,
     ) {
     }
 
     /**
-     * The timestamp should be generated at the time the request was made and should be in format of Y-m-d H:i:s.
+     * The timestamp should be generated at the time the request was made and should be in format of Y-m-d H:i:s based on UTC timezone.
      */
     public function getTimestamp(): string
     {
@@ -34,7 +34,7 @@ final class Request implements JsonSerializable
     }
 
     /**
-     * The real IP address of the request.
+     * The real IPV4 IP address of the request.
      */
     public function getIp(): string
     {
@@ -50,7 +50,8 @@ final class Request implements JsonSerializable
     }
 
     /**
-     * A route path of the request excluding query data if it has any.
+     * This will be used to create endpoint so send if you have it correctly only.
+     * Example: api/v1/workspaces/{workspaceId}
      */
     public function getRoutePath(): ?string
     {
@@ -58,8 +59,7 @@ final class Request implements JsonSerializable
     }
 
     /**
-     * The User Agent of the request. This can be pulled from headers but sometimes languages offer their own
-     * way of getting the User Agent and if there is one you should use that one.
+     * The User Agent of the request.
      */
     public function getUserAgent(): string
     {

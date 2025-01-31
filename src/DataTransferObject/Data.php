@@ -6,17 +6,17 @@ namespace Treblle\DataTransferObject;
 
 use JsonSerializable;
 
-final class Data implements JsonSerializable
+final readonly class Data implements JsonSerializable
 {
     /**
      * @param list<Error> $errors
      */
     public function __construct(
-        private readonly Server   $server,
-        private readonly Language $language,
-        private readonly Request  $request,
-        private readonly Response $response,
-        private readonly array $errors
+        private Server   $server,
+        private Language $language,
+        private Request  $request,
+        private Response $response,
+        private array    $errors
     ) {
     }
 

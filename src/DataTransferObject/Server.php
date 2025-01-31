@@ -6,7 +6,7 @@ namespace Treblle\DataTransferObject;
 
 use JsonSerializable;
 
-final class Server implements JsonSerializable
+final readonly class Server implements JsonSerializable
 {
     public function __construct(
         private string  $ip = 'bogon',
@@ -18,10 +18,9 @@ final class Server implements JsonSerializable
     }
 
     /**
-     * The IP address of the server.
-     * If you can not detect this leave empty.
+     * The real IPV4 IP address of the request.
      */
-    public function getIp(): ?string
+    public function getIp(): string
     {
         return $this->ip;
     }
@@ -31,7 +30,7 @@ final class Server implements JsonSerializable
      * You should set this value to UTC if you can not detect the timezone.
      * Source: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones.
      */
-    public function getTimezone(): ?string
+    public function getTimezone(): string
     {
         return $this->timezone;
     }
@@ -58,7 +57,7 @@ final class Server implements JsonSerializable
     /**
      * The OS object contains information about the operating system that is running on the server.
      */
-    public function getOs(): ?Os
+    public function getOs(): Os
     {
         return $this->os;
     }

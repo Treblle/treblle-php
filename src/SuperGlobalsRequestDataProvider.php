@@ -17,8 +17,8 @@ final class SuperGlobalsRequestDataProvider implements RequestDataProvider
     {
         return new Request(
             timestamp: gmdate('Y-m-d H:i:s'),
-            ip: $this->getClientIpAddress(),
             url: $this->getEndpointUrl(),
+            ip: $this->getClientIpAddress(),
             user_agent: $this->getUserAgent(),
             method: $_SERVER['REQUEST_METHOD'] ?? 'GET',
             headers: getallheaders(),

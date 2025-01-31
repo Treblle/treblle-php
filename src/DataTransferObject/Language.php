@@ -6,7 +6,7 @@ namespace Treblle\DataTransferObject;
 
 use JsonSerializable;
 
-final class Language implements JsonSerializable
+final readonly class Language implements JsonSerializable
 {
     public function __construct(
         private string  $name = 'php',
