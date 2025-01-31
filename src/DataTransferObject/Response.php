@@ -46,7 +46,7 @@ final class Response implements JsonSerializable
     }
 
     /**
-     * The load time of the API response in microseconds.
+     * The load time of the API response Unix timestamp with microseconds difference from now
      */
     public function getLoadTime(): float
     {
