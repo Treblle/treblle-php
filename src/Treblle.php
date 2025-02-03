@@ -132,14 +132,14 @@ final class Treblle
         return $this->url ?? $urls[array_rand($urls)];
     }
 
-    protected function setVersion(float $version): self
+    public function setVersion(float $version): self
     {
         $this->version = $version;
 
         return $this;
     }
 
-    protected function setName(string $name): self
+    public function setName(string $name): self
     {
         $this->name = $name;
 
