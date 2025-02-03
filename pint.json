@@ -41,7 +41,7 @@
     "no_empty_comment": true,
     "not_operator_with_successor_space": true,
     "ordered_traits": true,
-    "protected_to_private": true,
+    "protected_to_private": false,
     "simplified_if_return": true,
     "strict_comparison": true,
     "ternary_to_null_coalescing": true,
