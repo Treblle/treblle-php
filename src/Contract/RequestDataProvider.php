@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Treblle\Contract;
 
-use Treblle\Model\Request;
+use Treblle\DataTransferObject\Request;
 
 interface RequestDataProvider
 {

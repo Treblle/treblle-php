@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Treblle\Contract;
 
-use Treblle\Model\Response;
+use Treblle\DataTransferObject\Response;
 
 interface ResponseDataProvider
 {
