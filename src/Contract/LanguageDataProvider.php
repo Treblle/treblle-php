@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Treblle\Contract;
+namespace Treblle\Php\Contract;
 
-use Treblle\DataTransferObject\Language;
+use Treblle\Php\DataTransferObject\Language;
 
 interface LanguageDataProvider
 {

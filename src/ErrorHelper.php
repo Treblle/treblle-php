@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Treblle;
+namespace Treblle\Php;
 
 final class ErrorHelper
 {

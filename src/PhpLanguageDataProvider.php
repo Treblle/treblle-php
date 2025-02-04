@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Treblle;
+namespace Treblle\Php;
 
-use Treblle\DataTransferObject\Language;
-use Treblle\Contract\LanguageDataProvider;
+use Treblle\Php\DataTransferObject\Language;
+use Treblle\Php\Contract\LanguageDataProvider;
 
 final class PhpLanguageDataProvider implements LanguageDataProvider
 {

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Treblle;
+namespace Treblle\Php;
 
 use Exception;
 use RuntimeException;
-use Treblle\DataTransferObject\Error;
-use Treblle\Contract\ErrorDataProvider;
-use Treblle\DataTransferObject\Response;
-use Treblle\Contract\ResponseDataProvider;
+use Treblle\Php\DataTransferObject\Error;
+use Treblle\Php\Contract\ErrorDataProvider;
+use Treblle\Php\DataTransferObject\Response;
+use Treblle\Php\Contract\ResponseDataProvider;
 
 final class OutputBufferingResponseDataProvider implements ResponseDataProvider
 {
