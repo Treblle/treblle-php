@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Treblle\DataTransferObject;
+namespace Treblle\Php\DataTransferObject;
 
 use JsonSerializable;
 

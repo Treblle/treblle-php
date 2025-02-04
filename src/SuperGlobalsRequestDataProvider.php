@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Treblle;
+namespace Treblle\Php;
 
-use Treblle\DataTransferObject\Request;
-use Treblle\Contract\RequestDataProvider;
+use Treblle\Php\DataTransferObject\Request;
+use Treblle\Php\Contract\RequestDataProvider;
 
 final class SuperGlobalsRequestDataProvider implements RequestDataProvider
 {

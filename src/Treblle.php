@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Treblle;
+namespace Treblle\Php;
 
 use Throwable;
 use GuzzleHttp\ClientInterface;
-use Treblle\DataTransferObject\Data;
-use Treblle\DataTransferObject\Error;
-use Treblle\Contract\ErrorDataProvider;
-use Treblle\Contract\ServerDataProvider;
-use Treblle\Contract\RequestDataProvider;
-use Treblle\Contract\LanguageDataProvider;
-use Treblle\Contract\ResponseDataProvider;
+use Treblle\Php\DataTransferObject\Data;
+use Treblle\Php\DataTransferObject\Error;
+use Treblle\Php\Contract\ErrorDataProvider;
+use Treblle\Php\Contract\ServerDataProvider;
+use Treblle\Php\Contract\RequestDataProvider;
+use Treblle\Php\Contract\LanguageDataProvider;
+use Treblle\Php\Contract\ResponseDataProvider;
 
 /**
  * Create a FREE Treblle account => https://treblle.com/register.

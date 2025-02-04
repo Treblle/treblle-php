@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Treblle\Factory;
+namespace Treblle\Php\Factory;
 
-use Treblle\Treblle;
 use GuzzleHttp\Client;
-use Treblle\FieldMasker;
-use Treblle\PhpLanguageDataProvider;
-use Treblle\InMemoryErrorDataProvider;
-use Treblle\SuperGlobalsServerDataProvider;
-use Treblle\SuperGlobalsRequestDataProvider;
-use Treblle\OutputBufferingResponseDataProvider;
+use Treblle\Php\Treblle;
+use Treblle\Php\FieldMasker;
+use Treblle\Php\PhpLanguageDataProvider;
+use Treblle\Php\InMemoryErrorDataProvider;
+use Treblle\Php\SuperGlobalsServerDataProvider;
+use Treblle\Php\SuperGlobalsRequestDataProvider;
+use Treblle\Php\OutputBufferingResponseDataProvider;
 
 final class TreblleFactory
 {

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Treblle;
+namespace Treblle\Php;
 
-use Treblle\DataTransferObject\Error;
-use Treblle\Contract\ErrorDataProvider;
+use Treblle\Php\DataTransferObject\Error;
+use Treblle\Php\Contract\ErrorDataProvider;
 
 final class InMemoryErrorDataProvider implements ErrorDataProvider
 {

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Treblle;
+namespace Treblle\Php;
 
-use Treblle\DataTransferObject\Os;
-use Treblle\DataTransferObject\Server;
-use Treblle\Contract\ServerDataProvider;
+use Treblle\Php\DataTransferObject\Os;
+use Treblle\Php\DataTransferObject\Server;
+use Treblle\Php\Contract\ServerDataProvider;
 
 final class SuperGlobalsServerDataProvider implements ServerDataProvider
 {
@@ -14,6 +14,7 @@ final class SuperGlobalsServerDataProvider implements ServerDataProvider
     {
         return new Server(
             ip: $this->getServerVariable('SERVER_ADDR') ?? 'bogon',
+            timezone: date_default_timezone_get(),
             software: $this->getServerVariable('SERVER_SOFTWARE'),
             protocol: $this->getServerVariable('SERVER_PROTOCOL'),
             os: new Os(
@@ -21,7 +22,6 @@ final class SuperGlobalsServerDataProvider implements ServerDataProvider
                 php_uname('r'),
                 php_uname('m'),
             ),
-            timezone: date_default_timezone_get(),
         );
     }
 

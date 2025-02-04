@@ -22,12 +22,12 @@
   ],
   "autoload": {
     "psr-4": {
-      "Treblle\\": "src/"
+      "Treblle\\Php\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Tests\\Treblle\\": "tests/"
+      "Treblle\\Php\\Tests\\": "tests/"
     }
   },
   "require": {

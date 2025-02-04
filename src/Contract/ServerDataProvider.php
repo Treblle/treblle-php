@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Treblle\Contract;
+namespace Treblle\Php\Contract;
 
-use Treblle\DataTransferObject\Server;
+use Treblle\Php\DataTransferObject\Server;
 
 interface ServerDataProvider
 {
