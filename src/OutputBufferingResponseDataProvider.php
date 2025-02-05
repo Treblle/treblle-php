@@ -32,7 +32,7 @@ final class OutputBufferingResponseDataProvider implements ResponseDataProvider
         return new Response(
             code: is_int($responseCode) ? $responseCode : 200,
             size: $responseSize,
-            load_time: $this->getLoadTime(),
+            load_time: $this->getLoadTimeInMilliseconds(),
             body: $responseBody,
             headers: $this->getResponseHeaders(),
         );
@@ -59,10 +59,10 @@ final class OutputBufferingResponseDataProvider implements ResponseDataProvider
     /**
      * Calculate the execution time for the script.
      */
-    private function getLoadTime(): float
+    private function getLoadTimeInMilliseconds(): float
     {
         if (isset($_SERVER['REQUEST_TIME_FLOAT'])) {
-            return (float) microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'];
+            return (microtime(true) * 1000) - ((float)$_SERVER['REQUEST_TIME_FLOAT'] * 1000);
         }
 
         return 0.0000;
