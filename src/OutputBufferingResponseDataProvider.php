@@ -62,7 +62,7 @@ final class OutputBufferingResponseDataProvider implements ResponseDataProvider
     private function getLoadTime(): float
     {
         if (isset($_SERVER['REQUEST_TIME_FLOAT'])) {
-            return (float) microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'];
+            return (microtime(true) * 1000) - ((float)$_SERVER['REQUEST_TIME_FLOAT'] * 1000);
         }
 
         return 0.0000;
