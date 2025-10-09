@@ -21,14 +21,14 @@ final class Treblle
 {
     private string $name = 'php';
 
-    private float $version = 4.0;
+    private float $version = 5.0;
 
     /**
      * Create a new Treblle instance.
      */
     public function __construct(
         private string $apiKey,
-        private string $projectId,
+        private string $sdkToken,
         private ClientInterface $client,
         private ServerDataProvider $serverDataProvider,
         private LanguageDataProvider $languageDataProvider,
@@ -156,7 +156,7 @@ final class Treblle
         try {
             return [
                 'api_key' => $this->apiKey,
-                'project_id' => $this->projectId,
+                'project_id' => $this->sdkToken,
                 'sdk' => $this->name,
                 'version' => $this->version,
                 'data' => new Data(
