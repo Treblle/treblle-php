@@ -394,8 +394,8 @@ export TREBLLE_SDK_TOKEN="your-api-key"
 
 Treblle provides [open-source SDKs](https://docs.treblle.com/en/integrations) that let you seamlessly integrate Treblle with your REST-based APIs.
 
-- [`treblle-laravel`](https://github.com/Treblle/treblle-laravel): SDK for Laravel
 - [`treblle-php`](https://github.com/Treblle/treblle-php): SDK for PHP
+- [`treblle-laravel`](https://github.com/Treblle/treblle-laravel): SDK for Laravel
 - [`treblle-symfony`](https://github.com/Treblle/treblle-symfony): SDK for Symfony
 - [`treblle-lumen`](https://github.com/Treblle/treblle-lumen): SDK for Lumen
 - [`treblle-sails`](https://github.com/Treblle/treblle-sails): SDK for Sails
@@ -410,17 +410,6 @@ Treblle provides [open-source SDKs](https://docs.treblle.com/en/integrations) th
 - [`treblle-python`](https://github.com/Treblle/treblle-python): SDK for Python/Django
 
 > See the [docs](https://docs.treblle.com/en/integrations) for more on SDKs and Integrations.
-
-## Other Packages
-
-Besides the SDKs, we also provide helpers and configuration used for SDK
-development. If you're thinking about contributing to or creating a SDK, have a look at the resources
-below:
-
-- [`treblle-utils`](https://github.com/Treblle/treblle-utils):  A set of helpers and
-  utility functions useful for the JavaScript SDKs.
-- [`php-utils`](https://github.com/Treblle/php-utils):   A set of helpers and
-  utility functions useful for the PHP SDKs.
 
 ## Community 💙
 
