@@ -156,7 +156,7 @@ final class Treblle
         try {
             return [
                 'api_key' => $this->apiKey,
-                'project_id' => $this->sdkToken,
+                'sdk_token' => $this->sdkToken,
                 'sdk' => $this->name,
                 'version' => $this->version,
                 'data' => new Data(
