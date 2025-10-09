@@ -15,6 +15,10 @@ use Treblle\Php\OutputBufferingResponseDataProvider;
 
 final class TreblleFactory
 {
+    private function __construct()
+    {
+    }
+
     /**
      * @param list<string> $maskedFields
      * @param array<string, mixed> $config
