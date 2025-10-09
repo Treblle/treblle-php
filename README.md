@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://treblle-github.s3.us-east-1.amazonaws.com/github-header.jpg"/>
+  <img src="https://github.com/user-attachments/assets/5b63bd2c-39ec-46cc-b1d5-42b7d79460c4"/>
 </div>
 <div align="center">
 
@@ -21,13 +21,15 @@
   <hr />
 </div>
 
-Treblle is a lightweight SDK that helps Engineering and Product teams build, ship & maintain REST based APIs faster.
+API Intelligence Platform. 🚀
+
+Treblle is a lightweight SDK that helps Engineering and Product teams build, ship & maintain REST-based APIs faster.
 
 ## Features
 
 <div align="center">
   <br />
-  <img src="https://treblle-github.s3.amazonaws.com/features.png"/>
+  <img src="https://github.com/user-attachments/assets/558f9b23-3a9d-42f4-94d0-f2d8d4956bdf"/>
   <br />
   <br />
 </div>
