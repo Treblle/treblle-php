@@ -216,9 +216,18 @@ Add to default list in `TreblleFactory::create()` or pass via `maskedFields` par
 
 ## Dependencies
 
-- **guzzlehttp/guzzle**: `^7.4.5|^8.0` - HTTP client for sending data
+- **guzzlehttp/guzzle**: `^7.4.5 || ^8.0 || ^9.0` - HTTP client for sending data (supports latest Guzzle versions)
 - **ext-mbstring**: Required for string operations
 - **ext-pcntl**: Optional, for background processing
+
+### Guzzle Version Support
+
+The SDK is tested and compatible with:
+- **Guzzle 7.x** (currently 7.10.0) - Latest stable version
+- **Guzzle 8.x** - Future-proof for when released
+- **Guzzle 9.x** - Future-proof for when released
+
+The SDK uses standard Guzzle PSR-18 client interfaces, ensuring compatibility across versions.
 
 ## Development Dependencies
 
