@@ -235,7 +235,7 @@ For better performance, enable background processing using PHP's `pcntl_fork`:
 $treblle = TreblleFactory::create(
     apiKey: $_ENV['TREBLLE_API_KEY'],
     sdkToken: $_ENV['TREBLLE_SDK_TOKEN'],
-    config: ['fork_process' => true]
+    config: [ 'fork_process' => extension_loaded('pcntl') ]
 );
 ```
 
