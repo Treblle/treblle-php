@@ -2,17 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Treblle\Factory;
+namespace Treblle\Php\Factory;
 
 use GuzzleHttp\Client;
-use Treblle\InMemoryErrorDataProvider;
-use Treblle\OutputBufferingResponseDataProvider;
-use Treblle\PayloadAnonymizer;
-use Treblle\PhpHelper;
-use Treblle\PhpLanguageDataProvider;
-use Treblle\SuperglobalsRequestDataProvider;
-use Treblle\SuperglobalsServerDataProvider;
-use Treblle\Treblle;
+use Treblle\Php\Treblle;
+use Treblle\Php\FieldMasker;
+use Treblle\Php\PhpLanguageDataProvider;
+use Treblle\Php\InMemoryErrorDataProvider;
+use Treblle\Php\SuperGlobalsServerDataProvider;
+use Treblle\Php\SuperGlobalsRequestDataProvider;
+use Treblle\Php\OutputBufferingResponseDataProvider;
 
 final class TreblleFactory
 {
@@ -27,8 +26,6 @@ final class TreblleFactory
         array $maskedFields = [],
         array $config = []
     ): Treblle {
-        $phpHelper = new PhpHelper();
-        $errorDataProvider = new InMemoryErrorDataProvider();
         $defaultMaskedFields = [
             'password',
             'pwd',
@@ -40,24 +37,32 @@ final class TreblleFactory
             'ssn',
             'credit_score',
         ];
+
         $maskedFields = array_unique(array_merge($defaultMaskedFields, $maskedFields));
-        $anonymizer = new PayloadAnonymizer($maskedFields);
+
+        $masker = new FieldMasker($maskedFields);
+
+        $errorDataProvider = new InMemoryErrorDataProvider();
 
         $treblle = new Treblle(
-            $apiKey,
-            $projectId,
-            $config['client'] ?? new Client(),
-            new SuperglobalsServerDataProvider(),
-            new PhpLanguageDataProvider($phpHelper),
-            new SuperglobalsRequestDataProvider($anonymizer),
-            new OutputBufferingResponseDataProvider($anonymizer, $errorDataProvider),
-            $errorDataProvider,
-            $debug
+            apiKey: $apiKey,
+            projectId: $projectId,
+            client: $config['client'] ?? new Client(),
+            serverDataProvider: $config['server_provider'] ?? new SuperGlobalsServerDataProvider(),
+            languageDataProvider: $config['language_provider'] ?? new PhpLanguageDataProvider(),
+            requestDataProvider: $config['request_provider'] ?? new SuperGlobalsRequestDataProvider($masker),
+            responseDataProvider: $config['response_provider'] ?? new OutputBufferingResponseDataProvider($masker, $errorDataProvider),
+            errorDataProvider: $config['error_provider'] ?? $errorDataProvider,
+            debug: $debug,
+            url: $config['url'] ?? null,
+            forkProcess: $config['fork_process'] ?? false,
         );
 
-        set_error_handler([$treblle, 'onError']);
-        set_exception_handler([$treblle, 'onException']);
-        register_shutdown_function([$treblle, 'onShutdown']);
+        if ($config['register_handlers'] ?? true) {
+            set_error_handler([$treblle, 'onError']);
+            set_exception_handler([$treblle, 'onException']);
+            register_shutdown_function([$treblle, 'onShutdown']);
+        }
 
         return $treblle;
     }

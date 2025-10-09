@@ -2,30 +2,22 @@
 
 declare(strict_types=1);
 
-namespace Treblle\Model;
+namespace Treblle\Php\DataTransferObject;
 
-final class Data implements \JsonSerializable
+use JsonSerializable;
+
+final readonly class Data implements JsonSerializable
 {
-    private Server $server;
-    private Language $language;
-    private Request $request;
-    private Response $response;
-
-    /**
-     * @var list<Error>
-     */
-    private array $errors;
-
     /**
      * @param list<Error> $errors
      */
-    public function __construct(Server $server, Language $language, Request $request, Response $response, array $errors)
-    {
-        $this->server = $server;
-        $this->language = $language;
-        $this->request = $request;
-        $this->response = $response;
-        $this->errors = $errors;
+    public function __construct(
+        private Server   $server,
+        private Language $language,
+        private Request  $request,
+        private Response $response,
+        private array    $errors
+    ) {
     }
 
     public function getServer(): Server
@@ -49,7 +41,7 @@ final class Data implements \JsonSerializable
     }
 
     /**
-     * @return list<Error>
+     * @return list<Error> $errors
      */
     public function getErrors(): array
     {

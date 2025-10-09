@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Treblle\Contract;
+namespace Treblle\Php\Contract;
 
-use Treblle\Model\Request;
+use Treblle\Php\DataTransferObject\Request;
 
 interface RequestDataProvider
 {
