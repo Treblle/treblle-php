@@ -6,11 +6,28 @@ namespace Treblle\Php\DataTransferObject;
 
 use JsonSerializable;
 
+/**
+ * Represents HTTP request data captured by Treblle.
+ *
+ * This DTO contains all relevant information about an incoming HTTP request,
+ * including headers, body, query parameters, method, URL, and metadata.
+ *
+ * @package Treblle\Php\DataTransferObject
+ */
 final readonly class Request implements JsonSerializable
 {
     /**
-     * @param array<string, string> $headers
-     * @param array<int|string, mixed> $body
+     * Constructs a new Request object.
+     *
+     * @param string $timestamp The request timestamp in Y-m-d H:i:s format (UTC)
+     * @param string $url The complete request URL including query string
+     * @param string $ip The client IP address (defaults to 'bogon' for private IPs)
+     * @param string $user_agent The User-Agent header value
+     * @param string $method The HTTP method (GET, POST, PUT, DELETE, etc.)
+     * @param array<string, string> $headers The request headers
+     * @param array<int|string, mixed> $query The query string parameters
+     * @param array<int|string, mixed> $body The request body data
+     * @param string|null $route_path The route pattern (e.g., /api/v1/users/{id})
      */
     public function __construct(
         private string $timestamp,
@@ -26,7 +43,12 @@ final readonly class Request implements JsonSerializable
     }
 
     /**
-     * The timestamp should be generated at the time the request was made and should be in format of Y-m-d H:i:s based on UTC timezone.
+     * Gets the request timestamp.
+     *
+     * The timestamp is generated when the request was received and is formatted
+     * as Y-m-d H:i:s in UTC timezone.
+     *
+     * @return string The request timestamp
      */
     public function getTimestamp(): string
     {
@@ -34,7 +56,12 @@ final readonly class Request implements JsonSerializable
     }
 
     /**
-     * The real IPV4 IP address of the request.
+     * Gets the client IP address.
+     *
+     * Returns the real IPv4 address of the client making the request.
+     * Defaults to 'bogon' for private/internal IP addresses.
+     *
+     * @return string The client IP address
      */
     public function getIp(): string
     {
@@ -42,7 +69,11 @@ final readonly class Request implements JsonSerializable
     }
 
     /**
-     * A full URL of the request including query data if it has any.
+     * Gets the complete request URL.
+     *
+     * Includes the full URL with protocol, host, path, and query string.
+     *
+     * @return string The full request URL
      */
     public function getUrl(): string
     {
@@ -50,8 +81,13 @@ final readonly class Request implements JsonSerializable
     }
 
     /**
-     * This will be used to create endpoint so send if you have it correctly only.
-     * Example: api/v1/workspaces/{workspaceId}
+     * Gets the route pattern path.
+     *
+     * Used to group similar endpoints together in Treblle. For example,
+     * requests to /api/v1/users/123 and /api/v1/users/456 would both
+     * use the route path /api/v1/users/{id}.
+     *
+     * @return string|null The route pattern, or null if not available
      */
     public function getRoutePath(): ?string
     {
@@ -59,7 +95,9 @@ final readonly class Request implements JsonSerializable
     }
 
     /**
-     * The User Agent of the request.
+     * Gets the User-Agent header value.
+     *
+     * @return string The User-Agent string
      */
     public function getUserAgent(): string
     {
@@ -67,9 +105,12 @@ final readonly class Request implements JsonSerializable
     }
 
     /**
-     * The HTTP method for the request.
-     * Should be uppercased if possible.
-     * default is GET
+     * Gets the HTTP request method.
+     *
+     * Common values: GET, POST, PUT, DELETE, PATCH, OPTIONS, HEAD
+     * Should be uppercase when possible.
+     *
+     * @return string The HTTP method (defaults to GET)
      */
     public function getMethod(): string
     {
@@ -77,7 +118,10 @@ final readonly class Request implements JsonSerializable
     }
 
     /**
-     * Request headers in key:value (json_encoded) format as shown below.
+     * Gets the request headers.
+     *
+     * Returns headers as a key-value array. Sensitive headers like
+     * Authorization may be masked by the field masker.
      *
      * @return array<string, string>
      */
@@ -87,9 +131,10 @@ final readonly class Request implements JsonSerializable
     }
 
     /**
-     * The COMPLETE request data sent with this request. This should include any form-data values, x-www-urlencoded data,
-     * raw data or even query data. Anything that was sent as part of the request data should be shown here wrapped in a
-     * body object.
+     * Gets the request body data.
+     *
+     * Includes all data sent with the request: form-data, x-www-form-urlencoded,
+     * JSON, XML, or raw data. Sensitive fields may be masked by the field masker.
      *
      * @return array<int|string, mixed>
      */
@@ -99,7 +144,9 @@ final readonly class Request implements JsonSerializable
     }
 
     /**
-     * The COMPLETE request query data sent with this request.
+     * Gets the query string parameters.
+     *
+     * Returns all parameters from the URL query string as an associative array.
      *
      * @return array<int|string, mixed>
      */
@@ -109,6 +156,8 @@ final readonly class Request implements JsonSerializable
     }
 
     /**
+     * Serializes the Request object to JSON format.
+     *
      * @return array<string, mixed>
      */
     public function jsonSerialize(): array
