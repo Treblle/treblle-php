@@ -15,13 +15,17 @@ use Treblle\Php\OutputBufferingResponseDataProvider;
 
 final class TreblleFactory
 {
+    private function __construct()
+    {
+    }
+
     /**
      * @param list<string> $maskedFields
      * @param array<string, mixed> $config
      */
     public static function create(
         string $apiKey,
-        string $projectId,
+        string $sdkToken,
         bool $debug = false,
         array $maskedFields = [],
         array $config = []
@@ -46,7 +50,7 @@ final class TreblleFactory
 
         $treblle = new Treblle(
             apiKey: $apiKey,
-            projectId: $projectId,
+            sdkToken: $sdkToken,
             client: $config['client'] ?? new Client(),
             serverDataProvider: $config['server_provider'] ?? new SuperGlobalsServerDataProvider(),
             languageDataProvider: $config['language_provider'] ?? new PhpLanguageDataProvider(),
