@@ -106,7 +106,7 @@ $treblle = TreblleFactory::create(
 
 ### Environment Variables
 
-- `TREBLLE_API_KEY` - Your Treblle project API key
+- `TREBLLE_API_KEY` - Your Treblle API key
 - `TREBLLE_SDK_TOKEN` - Your Treblle SDK token
 
 ## Coding Standards
