@@ -69,11 +69,18 @@ final readonly class OutputBufferingResponseDataProvider implements ResponseData
     {
         $responseSize = ob_get_length() ?: 0;
         $responseBody = $this->getResponseBody($responseSize);
-        $responseBody = $this->fieldMasker->mask($responseBody);
+
+        // Only mask if body is not empty
+        $responseBody = empty($responseBody) ? [] : $this->fieldMasker->mask($responseBody);
+
         $responseCode = http_response_code() ?: null;
 
         $headers = $this->getResponseHeaders();
-        $filteredHeaders = HeaderFilter::filter($headers, $this->excludedHeaders);
+
+        // Avoid function call if no headers to filter
+        $filteredHeaders = empty($this->excludedHeaders)
+            ? $headers
+            : HeaderFilter::filter($headers, $this->excludedHeaders);
 
         return new Response(
             code: is_int($responseCode) ? $responseCode : 200,
@@ -95,13 +102,21 @@ final readonly class OutputBufferingResponseDataProvider implements ResponseData
      */
     private function getResponseHeaders(): array
     {
-        $data = [];
         $headers = headers_list();
 
-        if (is_array($headers) && ! empty($headers)) {
-            foreach ($headers as $header) {
-                $header = explode(':', $header);
-                $data[array_shift($header)] = trim(implode(':', $header));
+        // Early return for empty headers
+        if (empty($headers)) {
+            return [];
+        }
+
+        $data = [];
+        foreach ($headers as $header) {
+            // Split only on first colon for better performance
+            $pos = mb_strpos($header, ':');
+            if (false !== $pos) {
+                $key = mb_substr($header, 0, $pos);
+                $value = trim(mb_substr($header, $pos + 1));
+                $data[$key] = $value;
             }
         }
 
@@ -133,6 +148,7 @@ final readonly class OutputBufferingResponseDataProvider implements ResponseData
      * - Responses >= 2MB: Logs an error and returns empty array
      * - Invalid JSON: Logs an error and returns empty array
      * - Non-string output: Returns empty array
+     * - Empty responses: Returns empty array immediately
      *
      * Uses ob_get_flush() to retrieve buffered output and attempts
      * to decode it as JSON.
@@ -142,6 +158,11 @@ final readonly class OutputBufferingResponseDataProvider implements ResponseData
      */
     private function getResponseBody(int $responseSize): array
     {
+        // Early return for empty or oversized responses
+        if (0 === $responseSize) {
+            return [];
+        }
+
         if ($responseSize >= 2_000_000) {
             $this->errorDataProvider->addError(
                 new Error(
@@ -158,11 +179,14 @@ final readonly class OutputBufferingResponseDataProvider implements ResponseData
 
         try {
             $output = ob_get_flush();
-            if (! is_string($output)) {
+            if (! is_string($output) || '' === $output) {
                 return [];
             }
 
-            return json_decode($output, true);
+            $decoded = json_decode($output, true);
+
+            // Return empty array if JSON decoding failed or result is not an array
+            return is_array($decoded) ? $decoded : [];
         } catch (Exception $exception) {
             $this->errorDataProvider->addError(
                 new Error(
