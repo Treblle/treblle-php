@@ -10,7 +10,7 @@ final readonly class Language implements JsonSerializable
 {
     public function __construct(
         private string  $name = 'php',
-        private ?string $version = null
+        private ?string $version = PHP_VERSION
     ) {
     }
 

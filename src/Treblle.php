@@ -6,7 +6,9 @@ namespace Treblle\Php;
 
 use Throwable;
 use GuzzleHttp\ClientInterface;
+use Treblle\Php\Helpers\ErrorHelper;
 use Treblle\Php\DataTransferObject\Data;
+use GuzzleHttp\Exception\GuzzleException;
 use Treblle\Php\DataTransferObject\Error;
 use Treblle\Php\Contract\ErrorDataProvider;
 use Treblle\Php\Contract\ServerDataProvider;
@@ -15,7 +17,7 @@ use Treblle\Php\Contract\LanguageDataProvider;
 use Treblle\Php\Contract\ResponseDataProvider;
 
 /**
- * Create a FREE Treblle account => https://treblle.com/register.
+ * Create a FREE Treblle account => https://platform.treblle.com.
  */
 final class Treblle
 {
@@ -27,22 +29,23 @@ final class Treblle
      * Create a new Treblle instance.
      */
     public function __construct(
-        private string $apiKey,
-        private string $sdkToken,
-        private ClientInterface $client,
-        private ServerDataProvider $serverDataProvider,
-        private LanguageDataProvider $languageDataProvider,
-        private RequestDataProvider $requestDataProvider,
-        private ResponseDataProvider $responseDataProvider,
-        private ErrorDataProvider $errorDataProvider,
-        private bool $debug,
-        private ?string $url = null,
-        private bool $forkProcess = false
+        private readonly string      $apiKey,
+        private readonly string      $sdkToken,
+        private readonly ClientInterface      $client,
+        private readonly ServerDataProvider   $serverDataProvider,
+        private readonly LanguageDataProvider $languageDataProvider,
+        private readonly RequestDataProvider  $requestDataProvider,
+        private readonly ResponseDataProvider $responseDataProvider,
+        private readonly ErrorDataProvider    $errorDataProvider,
+        private readonly bool                 $debug,
+        private readonly ?string              $url = null,
+        private readonly bool                 $forkProcess = false
     ) {
     }
 
     /**
      * Capture PHP errors.
+     * @throws Throwable
      */
     public function onError(int $type, string $message, string $file, int $line): bool
     {
@@ -65,6 +68,7 @@ final class Treblle
 
     /**
      * Capture PHP exceptions.
+     * @throws Throwable
      */
     public function onException(Throwable $exception): void
     {
@@ -147,8 +151,6 @@ final class Treblle
     }
 
     /**
-     * @return array<int|string, mixed>
-     *
      * @throws Throwable
      */
     private function buildPayload(): array
@@ -176,6 +178,10 @@ final class Treblle
         return [];
     }
 
+    /**
+     * @throws Throwable
+     * @throws GuzzleException
+     */
     private function collectData(string $payload): void
     {
         try {

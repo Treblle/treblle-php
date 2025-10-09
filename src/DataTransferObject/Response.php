@@ -9,7 +9,7 @@ use JsonSerializable;
 final readonly class Response implements JsonSerializable
 {
     public function __construct(
-        private int $code = 200, // TODO: default to something that can be identified easily
+        private int $code = 200,
         private float $size = 0.0,
         private float $load_time = 0.0,
         private array $body = [],
@@ -29,7 +29,6 @@ final readonly class Response implements JsonSerializable
 
     /**
      * The HTTP response code.
-     * Source: https://www.restapitutorial.com/httpstatuscodes.html.
      */
     public function getCode(): int
     {
