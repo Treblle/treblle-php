@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Treblle\Php;
+namespace Treblle\Php\DataProviders;
 
 use Treblle\Php\DataTransferObject\Error;
 use Treblle\Php\Contract\ErrorDataProvider;

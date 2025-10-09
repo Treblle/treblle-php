@@ -2,20 +2,26 @@
 
 declare(strict_types=1);
 
-namespace Treblle\Php;
+namespace Treblle\Php\DataProviders;
 
 use Exception;
 use RuntimeException;
+use Treblle\Php\Helpers\HeaderFilter;
 use Treblle\Php\DataTransferObject\Error;
 use Treblle\Php\Contract\ErrorDataProvider;
 use Treblle\Php\DataTransferObject\Response;
+use Treblle\Php\Helpers\SensitiveDataMasker;
 use Treblle\Php\Contract\ResponseDataProvider;
 
 final class OutputBufferingResponseDataProvider implements ResponseDataProvider
 {
+    /**
+     * @param list<string> $excludedHeaders
+     */
     public function __construct(
-        private FieldMasker       $fieldMasker,
-        private ErrorDataProvider $errorDataProvider
+        private SensitiveDataMasker $fieldMasker,
+        private ErrorDataProvider $errorDataProvider,
+        private array             $excludedHeaders = []
     ) {
         if (ob_get_level() < 1) {
             throw new RuntimeException('Output buffering must be enabled to collect responses. Have you called `ob_start()`?');
@@ -29,12 +35,15 @@ final class OutputBufferingResponseDataProvider implements ResponseDataProvider
         $responseBody = $this->fieldMasker->mask($responseBody);
         $responseCode = http_response_code() ?: null;
 
+        $headers = $this->getResponseHeaders();
+        $filteredHeaders = HeaderFilter::filter($headers, $this->excludedHeaders);
+
         return new Response(
             code: is_int($responseCode) ? $responseCode : 200,
             size: $responseSize,
             load_time: $this->getLoadTimeInMilliseconds(),
             body: $responseBody,
-            headers: $this->getResponseHeaders(),
+            headers: $filteredHeaders,
         );
     }
 

@@ -6,12 +6,12 @@ namespace Treblle\Php;
 
 use Throwable;
 use GuzzleHttp\ClientInterface;
-use Treblle\Php\Helpers\ErrorHelper;
 use Treblle\Php\DataTransferObject\Data;
 use GuzzleHttp\Exception\GuzzleException;
 use Treblle\Php\DataTransferObject\Error;
 use Treblle\Php\Contract\ErrorDataProvider;
 use Treblle\Php\Contract\ServerDataProvider;
+use Treblle\Php\Helpers\ErrorTypeTranslator;
 use Treblle\Php\Contract\RequestDataProvider;
 use Treblle\Php\Contract\LanguageDataProvider;
 use Treblle\Php\Contract\ResponseDataProvider;
@@ -55,7 +55,7 @@ final class Treblle
                 $file,
                 $line,
                 'onError',
-                ErrorHelper::translateErrorType($type),
+                ErrorTypeTranslator::translateErrorType($type),
             ));
         } catch (Throwable $throwable) {
             if ($this->debug) {

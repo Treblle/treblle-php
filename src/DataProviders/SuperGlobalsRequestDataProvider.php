@@ -2,26 +2,36 @@
 
 declare(strict_types=1);
 
-namespace Treblle\Php;
+namespace Treblle\Php\DataProviders;
 
+use Treblle\Php\Helpers\HeaderFilter;
 use Treblle\Php\DataTransferObject\Request;
+use Treblle\Php\Helpers\SensitiveDataMasker;
 use Treblle\Php\Contract\RequestDataProvider;
 
 final class SuperGlobalsRequestDataProvider implements RequestDataProvider
 {
-    public function __construct(private FieldMasker $masker)
-    {
+    /**
+     * @param list<string> $excludedHeaders
+     */
+    public function __construct(
+        private SensitiveDataMasker $masker,
+        private array $excludedHeaders = []
+    ) {
     }
 
     public function getRequest(): Request
     {
+        $headers = getallheaders();
+        $filteredHeaders = HeaderFilter::filter($headers, $this->excludedHeaders);
+
         return new Request(
             timestamp: gmdate('Y-m-d H:i:s'),
             url: $this->getEndpointUrl(),
             ip: $this->getClientIpAddress(),
             user_agent: $this->getUserAgent(),
             method: $_SERVER['REQUEST_METHOD'] ?? 'GET',
-            headers: getallheaders(),
+            headers: $filteredHeaders,
             body: $this->masker->mask($_REQUEST),
         );
     }

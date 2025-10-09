@@ -39,15 +39,26 @@ This is the official Treblle PHP SDK - a lightweight library that sends API requ
    - `Error` - Error/exception details
    - `Os` - Operating system info
 
-5. **Field Masking** (`src/FieldMasker.php`):
+5. **Sensitive Data Masking** (`src/Helpers/SensitiveDataMasker.php`):
    - Masks sensitive fields in request/response data
    - Default masked fields: password, secret, card_number, ssn, etc.
    - Custom masked fields support
+   - Handles authorization headers, API keys, and base64-encoded images
+
+6. **Header Filtering** (`src/Helpers/HeaderFilter.php`):
+   - Filters HTTP headers based on exclusion patterns
+   - Supports exact matching, wildcard patterns, and regex
+   - Custom excluded headers support
+
+7. **Error Type Translation** (`src/Helpers/ErrorTypeTranslator.php`):
+   - Translates PHP error type integers to string constant names
+   - Handles all PHP error types (E_ERROR, E_WARNING, etc.)
 
 ### Key Features
 
 - **Automatic data collection**: Captures server, request, response, language, and error data
-- **Field masking**: Sensitive data removed before sending to Treblle
+- **Sensitive data masking**: Sensitive fields and data removed before sending to Treblle
+- **Header filtering**: Exclude specific headers based on patterns before sending to Treblle
 - **Error tracking**: PHP errors, exceptions, and shutdown errors
 - **Background processing**: Optional `pcntl_fork` for non-blocking data transmission
 - **Debug mode**: Throws exceptions instead of silent failures
@@ -88,6 +99,11 @@ $treblle = TreblleFactory::create(
     sdkToken: 'your-sdk-token',
     debug: false,                           // Enable for dev (throws exceptions)
     maskedFields: ['custom_secret'],        // Additional fields to mask
+    excludedHeaders: [                      // Headers to exclude from Treblle
+        'X-Internal-*',                     // Wildcard patterns supported
+        'X-Debug-Token',                    // Exact matches
+        '/^Authorization$/i',               // Regex patterns
+    ],
     config: [
         'client' => new Client(),           // Custom Guzzle client
         'url' => 'https://custom.endpoint', // Custom Treblle endpoint
@@ -138,7 +154,7 @@ composer pint
 
 ## Important Implementation Details
 
-### Field Masking
+### Sensitive Data Masking
 
 Default masked fields (case-insensitive):
 - `password`, `pwd`, `secret`, `password_confirmation`
@@ -149,6 +165,14 @@ Also automatically masks:
 - Authorization headers (Bearer, Basic, Digest)
 - API key headers (`x-api-key`)
 - Base64 encoded images
+
+### Header Filtering
+
+Headers can be excluded before sending to Treblle using patterns:
+- **Exact match**: `"X-Custom-Header"` excludes only that header
+- **Wildcard**: `"X-Internal-*"` excludes all headers starting with "X-Internal-"
+- **Regex**: `"/^Authorization$/i"` uses regular expression matching
+- All matching is case-insensitive by default
 
 ### Output Buffering
 
