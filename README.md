@@ -140,7 +140,7 @@ $treblle = TreblleFactory::create(
     config: [
         'client' => new Client(),  // Custom HTTP client
         'url' => 'https://custom.endpoint.com',  // Custom Treblle endpoint
-        'fork_process' => false,  // Enable background processing
+        'fork_process' => extension_loaded('pcntl'),  // Enable background processing
         'register_handlers' => true,  // Auto-register error handlers
 
         // Custom data providers
