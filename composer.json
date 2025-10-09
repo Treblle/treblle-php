@@ -4,15 +4,21 @@
   "description": "Stay in tune with your APIs",
   "homepage": "https://treblle.com/",
   "keywords": [
-    "phpunit",
     "treblle",
     "api",
     "monitoring",
     "debuging",
-    "documentation"
+    "documentation",
+    "phpunit"
   ],
   "license": "MIT",
   "authors": [
+    {
+      "name": "Bhushan Gaikwad",
+      "email": "bhushan@treblle.com",
+      "homepage": "https://treblle.com/",
+      "role": "Developer"
+    },
     {
       "name": "Vedran Cindrić",
       "email": "vedran@treblle.com",
@@ -23,11 +29,6 @@
   "autoload": {
     "psr-4": {
       "Treblle\\Php\\": "src/"
-    }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "Treblle\\Php\\Tests\\": "tests/"
     }
   },
   "require": {
@@ -47,6 +48,6 @@
       "./vendor/bin/pint"
     ]
   },
-  "minimum-stability": "dev",
+  "minimum-stability": "stable",
   "prefer-stable": true
 }
