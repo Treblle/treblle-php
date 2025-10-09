@@ -13,16 +13,64 @@ use Treblle\Php\DataProviders\SuperGlobalsServerDataProvider;
 use Treblle\Php\DataProviders\SuperGlobalsRequestDataProvider;
 use Treblle\Php\DataProviders\OutputBufferingResponseDataProvider;
 
+/**
+ * Factory for creating and configuring Treblle SDK instances.
+ *
+ * This factory provides a streamlined way to instantiate Treblle with sensible
+ * defaults while allowing full customization through configuration options.
+ * It automatically sets up data providers, error handlers, and field masking.
+ *
+ * Features:
+ * - Default masked fields for common sensitive data (passwords, credit cards, etc.)
+ * - Automatic error handler registration (can be disabled)
+ * - Custom data provider support
+ * - Header filtering with pattern matching
+ * - Debug mode for development
+ * - Optional background processing via pcntl_fork
+ *
+ * @package Treblle\Php\Factory
+ */
 final class TreblleFactory
 {
+    /**
+     * Private constructor to prevent direct instantiation.
+     *
+     * Use TreblleFactory::create() instead.
+     */
     private function __construct()
     {
     }
 
     /**
-     * @param list<string> $maskedFields
-     * @param list<string> $excludedHeaders
-     * @param array<string, mixed> $config
+     * Creates and configures a new Treblle SDK instance.
+     *
+     * This is the main entry point for creating Treblle instances. It sets up
+     * all necessary components including data providers, field masking, and
+     * error handlers.
+     *
+     * Default masked fields (case-insensitive):
+     * - password, pwd, secret, password_confirmation
+     * - cc, card_number, ccv
+     * - ssn, credit_score
+     *
+     * Configuration options:
+     * - client: Custom GuzzleHttp\ClientInterface instance
+     * - url: Custom Treblle endpoint URL
+     * - fork_process: Enable background processing (requires pcntl extension)
+     * - register_handlers: Auto-register error/exception handlers (default: true)
+     * - server_provider: Custom ServerDataProvider implementation
+     * - language_provider: Custom LanguageDataProvider implementation
+     * - request_provider: Custom RequestDataProvider implementation
+     * - response_provider: Custom ResponseDataProvider implementation
+     * - error_provider: Custom ErrorDataProvider implementation
+     *
+     * @param string $apiKey Your Treblle project API key
+     * @param string $sdkToken Your Treblle SDK token
+     * @param bool $debug Enable debug mode (throws exceptions instead of silent failures)
+     * @param list<string> $maskedFields Additional fields to mask beyond defaults
+     * @param list<string> $excludedHeaders Header patterns to exclude (exact, wildcard, or regex)
+     * @param array<string, mixed> $config Advanced configuration options
+     * @return Treblle Configured Treblle instance ready to capture API data
      */
     public static function create(
         string $apiKey,

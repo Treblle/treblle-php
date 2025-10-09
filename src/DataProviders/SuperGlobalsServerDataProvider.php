@@ -8,8 +8,29 @@ use Treblle\Php\DataTransferObject\Os;
 use Treblle\Php\DataTransferObject\Server;
 use Treblle\Php\Contract\ServerDataProvider;
 
+/**
+ * Provides server information using PHP's superglobals and built-in functions.
+ *
+ * This data provider collects server details from $_SERVER and php_uname(),
+ * including IP address, timezone, web server software, HTTP protocol,
+ * and operating system information.
+ *
+ * @package Treblle\Php\DataProviders
+ */
 final class SuperGlobalsServerDataProvider implements ServerDataProvider
 {
+    /**
+     * Gets server information from superglobals and system functions.
+     *
+     * Collects:
+     * - Server IP address (defaults to 'bogon' if unavailable)
+     * - Timezone from PHP configuration
+     * - Web server software (e.g., Apache, nginx)
+     * - HTTP protocol version (e.g., HTTP/1.1, HTTP/2)
+     * - OS details: name, release, and architecture
+     *
+     * @return Server The server data transfer object
+     */
     public function getServer(): Server
     {
         return new Server(
@@ -25,6 +46,12 @@ final class SuperGlobalsServerDataProvider implements ServerDataProvider
         );
     }
 
+    /**
+     * Safely retrieves a server variable from the $_SERVER superglobal.
+     *
+     * @param string $variable The server variable name (e.g., 'SERVER_ADDR')
+     * @return string|null The variable value, or null if not set
+     */
     private function getServerVariable(string $variable): ?string
     {
         return $_SERVER[$variable] ?? null;

@@ -13,21 +13,58 @@ use Treblle\Php\DataTransferObject\Response;
 use Treblle\Php\Helpers\SensitiveDataMasker;
 use Treblle\Php\Contract\ResponseDataProvider;
 
-final class OutputBufferingResponseDataProvider implements ResponseDataProvider
+/**
+ * Provides HTTP response data using PHP's output buffering.
+ *
+ * This data provider captures response information using ob_* functions and
+ * headers_list(). It requires output buffering to be enabled (ob_start must
+ * be called before instantiation).
+ *
+ * Features:
+ * - Captures response body from output buffer
+ * - Masks sensitive fields in response data
+ * - Filters headers based on exclusion patterns
+ * - Calculates response size and load time
+ * - Handles large responses (>2MB) and invalid JSON
+ *
+ * @package Treblle\Php\DataProviders
+ */
+final readonly class OutputBufferingResponseDataProvider implements ResponseDataProvider
 {
     /**
-     * @param list<string> $excludedHeaders
+     * Constructs a new OutputBufferingResponseDataProvider.
+     *
+     * @param SensitiveDataMasker $fieldMasker The data masker for sensitive fields
+     * @param ErrorDataProvider $errorDataProvider Error provider for logging issues
+     * @param list<string> $excludedHeaders Header patterns to exclude from Treblle
+     * @throws RuntimeException If output buffering is not enabled
      */
     public function __construct(
         private SensitiveDataMasker $fieldMasker,
-        private ErrorDataProvider $errorDataProvider,
-        private array             $excludedHeaders = []
+        private ErrorDataProvider   $errorDataProvider,
+        private array               $excludedHeaders = []
     ) {
         if (ob_get_level() < 1) {
             throw new RuntimeException('Output buffering must be enabled to collect responses. Have you called `ob_start()`?');
         }
     }
 
+    /**
+     * Gets HTTP response data from output buffer and headers.
+     *
+     * Collects and processes:
+     * - HTTP status code (defaults to 200 if not set)
+     * - Response size in bytes from output buffer
+     * - Response load time in milliseconds
+     * - Response body as JSON (masked for sensitive fields)
+     * - Response headers (filtered)
+     *
+     * Handles edge cases:
+     * - Responses over 2MB: Logs error and returns empty body
+     * - Invalid JSON: Logs error and returns empty body
+     *
+     * @return Response The response data transfer object
+     */
     public function getResponse(): Response
     {
         $responseSize = ob_get_length() ?: 0;
@@ -48,7 +85,13 @@ final class OutputBufferingResponseDataProvider implements ResponseDataProvider
     }
 
     /**
-     * @return array<string, string>
+     * Gets response headers from headers_list().
+     *
+     * Parses headers returned by headers_list() into a key-value array.
+     * Handles headers with colons in their values by only splitting on
+     * the first colon.
+     *
+     * @return array<string, string> The response headers
      */
     private function getResponseHeaders(): array
     {
@@ -66,7 +109,13 @@ final class OutputBufferingResponseDataProvider implements ResponseDataProvider
     }
 
     /**
-     * Calculate the execution time for the script.
+     * Calculates the response load time in milliseconds.
+     *
+     * Measures the time between request start (REQUEST_TIME_FLOAT) and
+     * the current time using microtime(true). Returns 0 if REQUEST_TIME_FLOAT
+     * is not available.
+     *
+     * @return float The load time in milliseconds, or 0 if unavailable
      */
     private function getLoadTimeInMilliseconds(): float
     {
@@ -78,7 +127,18 @@ final class OutputBufferingResponseDataProvider implements ResponseDataProvider
     }
 
     /**
-     * @return array<int|string, mixed>
+     * Extracts and decodes the response body from output buffer.
+     *
+     * Handles special cases:
+     * - Responses >= 2MB: Logs an error and returns empty array
+     * - Invalid JSON: Logs an error and returns empty array
+     * - Non-string output: Returns empty array
+     *
+     * Uses ob_get_flush() to retrieve buffered output and attempts
+     * to decode it as JSON.
+     *
+     * @param int $responseSize The size of the buffered output in bytes
+     * @return array<int|string, mixed> The decoded response body or empty array
      */
     private function getResponseBody(int $responseSize): array
     {
