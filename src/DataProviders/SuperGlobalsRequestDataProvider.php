@@ -54,14 +54,17 @@ final readonly class SuperGlobalsRequestDataProvider implements RequestDataProvi
      */
     public function getRequest(): Request
     {
+        // Avoid function call if no headers to filter
         $headers = getallheaders();
-        $filteredHeaders = HeaderFilter::filter($headers, $this->excludedHeaders);
+        $filteredHeaders = empty($this->excludedHeaders)
+            ? $headers
+            : HeaderFilter::filter($headers, $this->excludedHeaders);
 
         return new Request(
             timestamp: gmdate('Y-m-d H:i:s'),
             url: $this->getEndpointUrl(),
             ip: $this->getClientIpAddress(),
-            user_agent: $this->getUserAgent(),
+            user_agent: $_SERVER['HTTP_USER_AGENT'] ?? '',
             method: $_SERVER['REQUEST_METHOD'] ?? 'GET',
             headers: $filteredHeaders,
             body: $this->masker->mask($_REQUEST),
@@ -82,15 +85,11 @@ final readonly class SuperGlobalsRequestDataProvider implements RequestDataProvi
      */
     private function getClientIpAddress(): string
     {
-        $ipAddress = $_SERVER['REMOTE_ADDR'] ?? 'bogon';
-
-        if (! empty($_SERVER['HTTP_CLIENT_IP'])) {
-            $ipAddress = $_SERVER['HTTP_CLIENT_IP'];
-        } elseif (! empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            $ipAddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
-        }
-
-        return $ipAddress;
+        // Check in priority order with null coalescing for performance
+        return $_SERVER['HTTP_CLIENT_IP']
+            ?? $_SERVER['HTTP_X_FORWARDED_FOR']
+            ?? $_SERVER['REMOTE_ADDR']
+            ?? 'bogon';
     }
 
     /**
@@ -107,24 +106,10 @@ final readonly class SuperGlobalsRequestDataProvider implements RequestDataProvi
      */
     private function getEndpointUrl(): string
     {
-        $protocol = $_SERVER['HTTPS'] ?? null !== 'off' ? 'https://' : 'http://';
+        // Optimized HTTPS detection
+        $isHttps = ! empty($_SERVER['HTTPS']) && 'off' !== $_SERVER['HTTPS'];
+        $protocol = $isHttps ? 'https://' : 'http://';
 
         return $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-    }
-
-    /**
-     * Gets the User-Agent header value.
-     *
-     * @return string The User-Agent string, or empty string if not set
-     */
-    private function getUserAgent(): string
-    {
-        $userAgent = '';
-
-        if (! empty($_SERVER['HTTP_USER_AGENT'])) {
-            $userAgent = $_SERVER['HTTP_USER_AGENT'];
-        }
-
-        return $userAgent;
     }
 }

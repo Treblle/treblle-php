@@ -21,11 +21,18 @@ namespace Treblle\Php\Helpers;
 final class HeaderFilter
 {
     /**
+     * @var array<string, string> Cache for compiled regex patterns
+     */
+    private static array $regexCache = [];
+
+    /**
      * Filters headers by excluding those matching the provided patterns.
      *
      * Processes headers and removes any that match the exclusion patterns.
      * Handles array values by extracting the first element. All pattern
      * matching is case-insensitive by default.
+     *
+     * Optimized with regex pattern caching to avoid recompilation on repeated calls.
      *
      * Examples:
      * <code>
@@ -45,6 +52,17 @@ final class HeaderFilter
      */
     public static function filter(array $headers, array $excludedHeaders = []): array
     {
+        // Early return if no headers or no exclusions
+        if (empty($headers) || empty($excludedHeaders)) {
+            // Convert array values to strings
+            $processed = [];
+            foreach ($headers as $key => $value) {
+                $processed[$key] = is_array($value) ? (string) reset($value) : (string) $value;
+            }
+
+            return $processed;
+        }
+
         $processed = [];
 
         foreach ($headers as $key => $value) {
@@ -85,7 +103,7 @@ final class HeaderFilter
     }
 
     /**
-     * Converts a pattern to a regular expression.
+     * Converts a pattern to a regular expression with caching.
      *
      * Handles three types of patterns:
      * 1. Regex patterns (already formatted): Returns as-is if wrapped in / /
@@ -95,20 +113,33 @@ final class HeaderFilter
      * All non-regex patterns are converted to case-insensitive regex with
      * anchors to ensure full string matching.
      *
+     * Results are cached to avoid repeated compilation of the same patterns.
+     *
      * @param string $pattern The pattern to convert (exact, wildcard, or regex)
      * @return string A valid regular expression pattern
      */
     private static function convertPatternToRegex(string $pattern): string
     {
+        // Check cache first
+        if (isset(self::$regexCache[$pattern])) {
+            return self::$regexCache[$pattern];
+        }
+
         // Already a regex pattern
         if (preg_match('/^\/.*\/[gimxsu]*$/', $pattern)) {
+            self::$regexCache[$pattern] = $pattern;
+
             return $pattern;
         }
 
         // Convert shell-style wildcards to regex
         $regex = preg_quote($pattern, '/');
         $regex = str_replace(['\*', '\?'], ['.*', '.'], $regex);
+        $compiled = '/^' . $regex . '$/i';
 
-        return '/^' . $regex . '$/i';
+        // Cache the result
+        self::$regexCache[$pattern] = $compiled;
+
+        return $compiled;
     }
 }

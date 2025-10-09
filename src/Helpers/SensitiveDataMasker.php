@@ -23,17 +23,26 @@ namespace Treblle\Php\Helpers;
 final class SensitiveDataMasker
 {
     /**
+     * @var array<string, true> Lowercase field names as keys for O(1) lookup performance
+     */
+    private array $lowerFields = [];
+
+    /**
      * Constructs a new SensitiveDataMasker.
      *
      * The field names provided are matched case-insensitively against
-     * keys in the data being masked. Static caching is used for performance
-     * when processing large datasets.
+     * keys in the data being masked. Field names are pre-processed and
+     * stored in a hash map for O(1) lookup performance.
      *
      * @param list<string> $fields List of field names to mask (e.g., 'password', 'api_key')
      */
     public function __construct(
         public array $fields = [],
     ) {
+        // Pre-process fields into lowercase hash map for fast lookups
+        foreach ($this->fields as $field) {
+            $this->lowerFields[mb_strtolower($field)] = true;
+        }
     }
 
     /**
@@ -43,6 +52,8 @@ final class SensitiveDataMasker
      * - Arrays: Recursively masks nested data
      * - Strings: Checks against masked fields, sensitive headers, and base64 images
      * - Other types: Returns unchanged
+     *
+     * Optimized for performance with early returns and minimal memory allocations.
      *
      * Example:
      * ```php
@@ -61,6 +72,11 @@ final class SensitiveDataMasker
      */
     public function mask(array $data): array
     {
+        // Early return for empty arrays
+        if (empty($data)) {
+            return $data;
+        }
+
         $collector = [];
         foreach ($data as $key => $value) {
             $collector[$key] = match (true) {
@@ -108,8 +124,7 @@ final class SensitiveDataMasker
      * 3. Checks if value is a base64-encoded image
      * 4. Returns original value if no masking rules match
      *
-     * Uses static caching for lowercase field names to optimize performance
-     * when processing multiple values.
+     * Optimized with hash map lookups (O(1)) instead of array searches (O(n)).
      *
      * @param bool|float|int|string $key The field name/key (will be converted to string if needed)
      * @param string $value The field value to potentially mask
@@ -121,14 +136,10 @@ final class SensitiveDataMasker
             $key = (string) $key;
         }
 
-        static $lowerFields = null;
-        if (null === $lowerFields) {
-            $lowerFields = array_map('strtolower', $this->fields);
-        }
-
         $lowerKey = mb_strtolower($key);
 
-        if (in_array($lowerKey, $lowerFields, true)) {
+        // O(1) hash map lookup instead of O(n) array search
+        if (isset($this->lowerFields[$lowerKey])) {
             return $this->star($value);
         }
 
