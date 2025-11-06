@@ -14,8 +14,6 @@
 <a href="https://blog.treblle.com" target="_blank">Blog</a>
 <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
 <a href="https://twitter.com/treblleapi" target="_blank">Twitter</a>
-<span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-<a href="https://treblle.com/chat" target="_blank">Discord</a>
 <br />
 
   <hr />
@@ -35,11 +33,9 @@ Treblle is a lightweight SDK that helps Engineering and Product teams build, shi
 </div>
 
 - [API Monitoring & Observability](https://www.treblle.com/features/api-monitoring-observability)
-- [Auto-generated API Docs](https://www.treblle.com/features/auto-generated-api-docs)
+- [Auto-generated API Docs](https://treblle.com/product/api-documentation)
 - [API analytics](https://www.treblle.com/features/api-analytics)
 - [Treblle API Score](https://www.treblle.com/features/api-quality-score)
-- [API Lifecycle Collaboration](https://www.treblle.com/features/api-lifecycle)
-- [Native Treblle Apps](https://www.treblle.com/features/native-apps)
 
 
 ## How Treblle Works
@@ -56,17 +52,17 @@ Treblle also uses the requests sent to your Dashboard to calculate your API scor
 ### Masking fields
 Masking fields ensure certain sensitive data are removed before being sent to Treblle.
 
-To make sure masking is done before any data leaves your server [we built it into all our SDKs](https://docs.treblle.com/en/security/masked-fields#fields-masked-by-default).
+To make sure masking is done before any data leaves your server [we built it into all our SDKs](https://docs.treblle.com/treblle/data-masking/).
 
-This means data masking is super fast and happens on a programming level before the API request is sent to Treblle. You can [customize](https://docs.treblle.com/en/security/masked-fields#custom-masked-fields) exactly which fields are masked when you’re integrating the SDK.
+This means data masking is super fast and happens on a programming level before the API request is sent to Treblle. You can [customize](https://docs.treblle.com/treblle/data-masking/) exactly which fields are masked when you’re integrating the SDK.
 
-> Visit the [Masked fields](https://docs.treblle.com/en/security/masked-fields) section of the [docs](https://docs.sailscasts.com) for the complete documentation.
+> Visit the [Masked fields](https://docs.treblle.com/treblle/data-masking/) section of the [docs](https://docs.sailscasts.com) for the complete documentation.
 
 
 ## Get Started
 
 1. Sign in to [Treblle](https://platform.treblle.com).
-2. [Create a Treblle project](https://docs.treblle.com/en/dashboard/projects#creating-a-project).
+2. [Create a Treblle project](https://docs.treblle.com/guides/getting-started/).
 3. [Setup the SDK](#install-the-sdk) for your platform.
 
 ### Install the SDK
@@ -648,7 +644,7 @@ export TREBLLE_API_KEY="your-project-id"
 export TREBLLE_SDK_TOKEN="your-api-key"
 ```
 
-> See the [docs](https://docs.treblle.com/en/integrations/php) for this SDK to learn more.
+> See the [docs](https://docs.treblle.com/integrations/php/laravel/) for this SDK to learn more.
 
 ## Available SDKs
 
@@ -679,8 +675,6 @@ Also, follow our [Blog](https://blog.treblle.com), and on [Twitter](https://twit
 
 You can chat with the team and other members on [Discord](https://treblle.com/chat) and follow our tutorials and other video material at [YouTube](https://youtube.com/@treblle).
 
-[![Treblle Discord](https://img.shields.io/badge/Treblle%20Discord-Join%20our%20Discord-F3F5FC?labelColor=7289DA&style=for-the-badge&logo=discord&logoColor=F3F5FC&link=https://treblle.com/chat)](https://treblle.com/chat)
-
 [![Treblle YouTube](https://img.shields.io/badge/Treblle%20YouTube-Subscribe%20on%20YouTube-F3F5FC?labelColor=c4302b&style=for-the-badge&logo=YouTube&logoColor=F3F5FC&link=https://youtube.com/@treblle)](https://youtube.com/@treblle)
 
 [![Treblle on Twitter](https://img.shields.io/badge/Treblle%20on%20Twitter-Follow%20Us-F3F5FC?labelColor=1DA1F2&style=for-the-badge&logo=Twitter&logoColor=F3F5FC&link=https://twitter.com/treblleapi)](https://twitter.com/treblleapi)
@@ -689,8 +683,7 @@ You can chat with the team and other members on [Discord](https://treblle.com/ch
 
 Here are some ways of contributing to making Treblle better:
 
-- **[Try out Treblle](https://docs.treblle.com/en/introduction#getting-started)**, and let us know ways to make Treblle better for you. Let us know here on [Discord](https://treblle.com/chat).
-- Join our [Discord](https://treblle.com/chat) and connect with other members to share and learn from.
+- **[Try out Treblle](https://docs.treblle.com/guides/getting-started/)**, and let us know ways to make Treblle better for you.
 - Send a pull request to any of our [open source repositories](https://github.com/Treblle) on Github. Check the contribution guide on the repo you want to contribute to for more details about how to contribute. We're looking forward to your contribution!
 
 ### Contributors
