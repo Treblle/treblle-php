@@ -98,10 +98,12 @@ final class TreblleFactory
 
         $errorDataProvider = new InMemoryErrorDataProvider();
 
+        $client = $config['client'] ?? self::createClient($config['url'] ?? null);
+
         $treblle = new Treblle(
             apiKey: $apiKey,
             sdkToken: $sdkToken,
-            client: $config['client'] ?? new Client(),
+            client: $client,
             serverDataProvider: $config['server_provider'] ?? new SuperGlobalsServerDataProvider(),
             languageDataProvider: $config['language_provider'] ?? new PhpLanguageDataProvider(),
             requestDataProvider: $config['request_provider'] ?? new SuperGlobalsRequestDataProvider($masker, $excludedHeaders),
@@ -119,5 +121,36 @@ final class TreblleFactory
         }
 
         return $treblle;
+    }
+
+    /**
+     * Creates a Guzzle HTTP client, optionally configured for connection reuse.
+     *
+     * When a custom URL is provided, the client is configured with TCP keep-alive
+     * via cURL options to enable connection reuse across requests. This benefits
+     * long-running PHP processes (Swoole, RoadRunner, FrankenPHP) where the same
+     * Treblle instance persists across multiple requests.
+     *
+     * cURL keep-alive settings:
+     * - CURLOPT_TCP_KEEPALIVE: Enables TCP keep-alive probes
+     * - CURLOPT_TCP_KEEPIDLE: 30 seconds before first keep-alive probe
+     * - CURLOPT_TCP_KEEPINTVL: 15 seconds between subsequent probes
+     *
+     * @param string|null $url Custom Treblle endpoint URL, or null for default rotation
+     * @return Client Configured Guzzle client instance
+     */
+    private static function createClient(?string $url): Client
+    {
+        if (null === $url) {
+            return new Client();
+        }
+
+        return new Client([
+            'curl' => [
+                CURLOPT_TCP_KEEPALIVE => 1,
+                CURLOPT_TCP_KEEPIDLE => 30,
+                CURLOPT_TCP_KEEPINTVL => 15,
+            ],
+        ]);
     }
 }
