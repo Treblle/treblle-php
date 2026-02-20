@@ -12,7 +12,7 @@ use Treblle\Php\Contract\RequestDataProvider;
 /**
  * Provides HTTP request data using PHP's superglobals.
  *
- * This data provider collects request information from $_SERVER, $_REQUEST,
+ * This data provider collects request information from $_SERVER, php://input,
  * and getallheaders(). It handles sensitive data masking and header filtering
  * before sending data to Treblle.
  *
@@ -67,8 +67,37 @@ final readonly class SuperGlobalsRequestDataProvider implements RequestDataProvi
             user_agent: $_SERVER['HTTP_USER_AGENT'] ?? '',
             method: $_SERVER['REQUEST_METHOD'] ?? 'GET',
             headers: $filteredHeaders,
-            body: $this->masker->mask($_REQUEST),
+            query: $this->masker->mask($_GET),
+            body: $this->masker->mask($this->getRequestBody()),
         );
+    }
+
+    /**
+     * Gets the request body from php://input.
+     *
+     * Reads the raw request body and attempts to JSON-decode it.
+     * Falls back to $_POST for form-encoded requests.
+     *
+     * @return array<int|string, mixed>
+     */
+    private function getRequestBody(): array
+    {
+        $rawBody = file_get_contents('php://input');
+
+        if ($rawBody !== false && $rawBody !== '') {
+            $decoded = json_decode($rawBody, true);
+
+            if (is_array($decoded)) {
+                return $decoded;
+            }
+        }
+
+        // Fallback to $_POST for form-encoded requests
+        if (! empty($_POST)) {
+            return $_POST;
+        }
+
+        return [];
     }
 
     /**
