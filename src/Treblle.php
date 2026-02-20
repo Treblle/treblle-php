@@ -213,6 +213,10 @@ final class Treblle
         try {
             $payload = $this->buildPayload();
             $payload = json_encode($payload);
+
+            if (false === $payload || mb_strlen($payload) > 2_000_000) {
+                $payload = '{"error": "payload too large or encoding failed in sdk"}';
+            }
         } catch (Throwable $throwable) {
             if ($this->debug) {
                 throw $throwable;
@@ -370,6 +374,10 @@ final class Treblle
      * Short timeouts ensure minimal impact on application performance.
      * Errors during transmission are silently ignored unless debug mode is enabled.
      *
+     * Payload Compression:
+     * The payload is gzip-compressed before transmission to reduce bandwidth usage.
+     * If compression fails, the original uncompressed payload is sent as a fallback.
+     *
      * Error Handling:
      * - Debug OFF: Silently catches and ignores transmission failures
      * - Debug ON: Re-throws exceptions for troubleshooting
@@ -382,6 +390,24 @@ final class Treblle
     private function collectData(string $payload): void
     {
         try {
+            $compressed = function_exists('gzencode') ? gzencode($payload) : false;
+
+            $headers = [
+                'Content-Type' => 'application/json',
+                'x-api-key' => $this->sdkToken,
+            ];
+
+            if (false !== $compressed) {
+                $body = $compressed;
+                $headers['Content-Encoding'] = 'gzip';
+            } else {
+                $body = $payload;
+            }
+
+            if (null !== $this->url) {
+                $headers['Connection'] = 'keep-alive';
+            }
+
             $this->client->request(
                 'POST',
                 $this->getBaseUrl(),
@@ -390,11 +416,8 @@ final class Treblle
                     'timeout' => 3,
                     'verify' => false,
                     'http_errors' => false,
-                    'headers' => [
-                        'Content-Type' => 'application/json',
-                        'x-api-key' => $this->sdkToken,
-                    ],
-                    'body' => $payload,
+                    'headers' => $headers,
+                    'body' => $body,
                 ]
             );
         } catch (Throwable $throwable) {

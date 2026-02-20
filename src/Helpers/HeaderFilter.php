@@ -21,6 +21,11 @@ namespace Treblle\Php\Helpers;
 final class HeaderFilter
 {
     /**
+     * @var int Maximum number of cached regex patterns to prevent unbounded memory growth in long-running processes
+     */
+    private const MAX_CACHE_SIZE = 100;
+
+    /**
      * @var array<string, string> Cache for compiled regex patterns
      */
     private static array $regexCache = [];
@@ -127,7 +132,7 @@ final class HeaderFilter
 
         // Already a regex pattern
         if (preg_match('/^\/.*\/[gimxsu]*$/', $pattern)) {
-            self::$regexCache[$pattern] = $pattern;
+            self::cachePattern($pattern, $pattern);
 
             return $pattern;
         }
@@ -137,9 +142,27 @@ final class HeaderFilter
         $regex = str_replace(['\*', '\?'], ['.*', '.'], $regex);
         $compiled = '/^' . $regex . '$/i';
 
-        // Cache the result
-        self::$regexCache[$pattern] = $compiled;
+        self::cachePattern($pattern, $compiled);
 
         return $compiled;
+    }
+
+    /**
+     * Stores a compiled regex pattern in the cache with size limits.
+     *
+     * Resets the cache when it exceeds MAX_CACHE_SIZE to prevent
+     * unbounded memory growth in long-running processes.
+     *
+     * @param string $pattern The original pattern as cache key
+     * @param string $regex The compiled regex to cache
+     * @return void
+     */
+    private static function cachePattern(string $pattern, string $regex): void
+    {
+        if (count(self::$regexCache) >= self::MAX_CACHE_SIZE) {
+            self::$regexCache = [];
+        }
+
+        self::$regexCache[$pattern] = $regex;
     }
 }

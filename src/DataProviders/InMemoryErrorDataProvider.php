@@ -22,6 +22,11 @@ use Treblle\Php\Contract\ErrorDataProvider;
 final class InMemoryErrorDataProvider implements ErrorDataProvider
 {
     /**
+     * @var int Maximum number of errors to store per request to prevent unbounded memory growth
+     */
+    private const MAX_ERRORS = 25;
+
+    /**
      * @var list<Error> In-memory storage for errors
      */
     private array $errors = [];
@@ -44,13 +49,18 @@ final class InMemoryErrorDataProvider implements ErrorDataProvider
      *
      * Called by Treblle's error handlers when errors, exceptions,
      * or shutdown errors occur. Errors are stored in the order they
-     * are encountered.
+     * are encountered. Stops accepting errors after MAX_ERRORS to
+     * prevent unbounded memory growth in noisy applications.
      *
      * @param Error $error The error object to store
      * @return void
      */
     public function addError(Error $error): void
     {
+        if (count($this->errors) >= self::MAX_ERRORS) {
+            return;
+        }
+
         $this->errors[] = $error;
     }
 }
