@@ -55,7 +55,7 @@ final readonly class SuperGlobalsRequestDataProvider implements RequestDataProvi
     public function getRequest(): Request
     {
         // Avoid function call if no headers to filter
-        $headers = getallheaders();
+        $headers = getallheaders() ?: [];
         $filteredHeaders = empty($this->excludedHeaders)
             ? $headers
             : HeaderFilter::filter($headers, $this->excludedHeaders);
@@ -139,6 +139,6 @@ final readonly class SuperGlobalsRequestDataProvider implements RequestDataProvi
         $isHttps = ! empty($_SERVER['HTTPS']) && 'off' !== $_SERVER['HTTPS'];
         $protocol = $isHttps ? 'https://' : 'http://';
 
-        return $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+        return $protocol . ($_SERVER['HTTP_HOST'] ?? '') . ($_SERVER['REQUEST_URI'] ?? '');
     }
 }

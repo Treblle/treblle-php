@@ -195,8 +195,8 @@ final class Treblle
      *   - Child process sends data then terminates itself
      *
      * Error Handling:
-     * - Payload building errors: Sends error message to Treblle instead
-     * - Debug OFF: Falls back to error payload, doesn't throw
+     * - Any failure during payload building or encoding aborts transmission silently
+     * - Debug OFF: Returns without sending anything on any failure
      * - Debug ON: Re-throws exceptions for troubleshooting
      *
      * Background Processing Flow:
@@ -214,15 +214,15 @@ final class Treblle
             $payload = $this->buildPayload();
             $payload = json_encode($payload);
 
-            if (false === $payload || mb_strlen($payload) > 2_000_000) {
-                $payload = '{"error": "payload too large or encoding failed in sdk"}';
+            if (false === $payload || '[]' === $payload || mb_strlen($payload) > 2_000_000) {
+                return;
             }
         } catch (Throwable $throwable) {
             if ($this->debug) {
                 throw $throwable;
             }
 
-            $payload = '{"error": "could not convert payload to valid json in sdk"}';
+            return;
         }
 
         if (! function_exists('pcntl_fork') || false === $this->forkProcess) {
@@ -324,36 +324,27 @@ final class Treblle
      *
      * All sensitive fields are masked before inclusion in the payload.
      *
-     * Error Handling:
-     * - Debug OFF: Returns empty array on failure
-     * - Debug ON: Re-throws exceptions for troubleshooting
+     * Any exception thrown by a data provider propagates to the caller (onShutdown),
+     * which handles it according to the debug mode setting.
      *
-     * @return array<string, mixed> The complete payload array, or empty array on failure
-     * @throws Throwable Only in debug mode if an exception occurs during payload building
+     * @return array<string, mixed> The complete payload array
+     * @throws Throwable If any data provider throws during data collection
      */
     private function buildPayload(): array
     {
-        try {
-            return [
-                'api_key' => $this->apiKey,
-                'sdk_token' => $this->sdkToken,
-                'sdk' => $this->name,
-                'version' => $this->version,
-                'data' => new Data(
-                    $this->serverDataProvider->getServer(),
-                    $this->languageDataProvider->getLanguage(),
-                    $this->requestDataProvider->getRequest(),
-                    $this->responseDataProvider->getResponse(),
-                    $this->errorDataProvider->getErrors()
-                ),
-            ];
-        } catch (Throwable $throwable) {
-            if ($this->debug) {
-                throw $throwable;
-            }
-        }
-
-        return [];
+        return [
+            'api_key' => $this->apiKey,
+            'sdk_token' => $this->sdkToken,
+            'sdk' => $this->name,
+            'version' => $this->version,
+            'data' => new Data(
+                $this->serverDataProvider->getServer(),
+                $this->languageDataProvider->getLanguage(),
+                $this->requestDataProvider->getRequest(),
+                $this->responseDataProvider->getResponse(),
+                $this->errorDataProvider->getErrors()
+            ),
+        ];
     }
 
     /**
