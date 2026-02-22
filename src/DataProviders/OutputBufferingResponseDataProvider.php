@@ -115,7 +115,7 @@ final readonly class OutputBufferingResponseDataProvider implements ResponseData
             $pos = mb_strpos($header, ':');
             if (false !== $pos) {
                 $key = mb_substr($header, 0, $pos);
-                $value = mb_trim(mb_substr($header, $pos + 1));
+                $value = trim(mb_substr($header, $pos + 1));
                 $data[$key] = $value;
             }
         }
