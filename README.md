@@ -1,71 +1,23 @@
-<div align="center">
-  <img src="https://github.com/user-attachments/assets/5b63bd2c-39ec-46cc-b1d5-42b7d79460c4"/>
-</div>
-<div align="center">
+## Treblle .PHP SDK
 
-# Treblle
+[![Latest Version](https://img.shields.io/packagist/v/treblle/treblle-php)](https://packagist.org/packages/treblle/treblle-php)
+![Packagist Downloads](https://img.shields.io/packagist/dt/treblle/treblle-php)
 
-<a href="https://docs.treblle.com/en/integrations" target="_blank">Integrations</a>
-<span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-<a href="http://treblle.com/" target="_blank">Website</a>
-<span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-<a href="https://docs.treblle.com" target="_blank">Docs</a>
-<span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-<a href="https://blog.treblle.com" target="_blank">Blog</a>
-<span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-<a href="https://twitter.com/treblleapi" target="_blank">Twitter</a>
-<br />
+[Website](http://treblle.com/) • [Documentation](https://docs.treblle.com/) • [Pricing](https://treblle.com/pricing)
 
-  <hr />
-</div>
-
-API Intelligence Platform. 🚀
-
-Treblle is a lightweight SDK that helps Engineering and Product teams build, ship & maintain REST-based APIs faster.
-
-## Features
-
-<div align="center">
-  <br />
-  <img src="https://github.com/user-attachments/assets/558f9b23-3a9d-42f4-94d0-f2d8d4956bdf"/>
-  <br />
-  <br />
-</div>
-
-- [API Monitoring & Observability](https://www.treblle.com/features/api-monitoring-observability)
-- [Auto-generated API Docs](https://treblle.com/product/api-documentation)
-- [API analytics](https://www.treblle.com/features/api-analytics)
-- [Treblle API Score](https://www.treblle.com/features/api-quality-score)
+Treblle is an API intelligence platfom that helps developers, teams and organizations understand their APIs from a single integration point.
 
 
-## How Treblle Works
-Once you’ve integrated a Treblle SDK in your codebase, this SDK will send requests and response data to your Treblle Dashboard.
+## Requirements
 
-In your Treblle Dashboard you get to see real-time requests to your API, auto-generated API docs, API analytics like how fast the response was for an endpoint, the load size of the response, etc.
-
-Treblle also uses the requests sent to your Dashboard to calculate your API score which is a quality score that’s calculated based on the performance, quality, and security best practices for your API.
-
-> Visit [https://docs.treblle.com](http://docs.treblle.com) for the complete documentation.
-
-## Security
-
-### Masking fields
-Masking fields ensure certain sensitive data are removed before being sent to Treblle.
-
-To make sure masking is done before any data leaves your server [we built it into all our SDKs](https://docs.treblle.com/treblle/data-masking/).
-
-This means data masking is super fast and happens on a programming level before the API request is sent to Treblle. You can [customize](https://docs.treblle.com/treblle/data-masking/) exactly which fields are masked when you’re integrating the SDK.
-
-> Visit the [Masked fields](https://docs.treblle.com/treblle/data-masking/) section of the [docs](https://docs.sailscasts.com) for the complete documentation.
+- PHP 8.2 or higher
+- `ext-mbstring` extension (required)
+- `ext-pcntl` extension (optional, for background processing)
+- Composer
 
 
-## Get Started
 
-1. Sign in to [Treblle](https://platform.treblle.com).
-2. [Create a Treblle project](https://docs.treblle.com/guides/getting-started/).
-3. [Setup the SDK](#install-the-sdk) for your platform.
-
-### Install the SDK
+## Installation
 
 ```sh
 composer require treblle/treblle-php
@@ -91,14 +43,7 @@ $treblle = TreblleFactory::create(
 );
 ```
 
-That's it! Your API requests and responses are now being sent to your Treblle project.
-
-## Requirements
-
-- PHP 8.2 or higher
-- `ext-mbstring` extension (required)
-- `ext-pcntl` extension (optional, for background processing)
-- Composer
+That's it! Your API requests and responses are now being sent to your Treblle dashboard.
 
 ## Configuration
 
@@ -400,18 +345,6 @@ The SDK automatically detects client IP addresses with proxy support:
 3. Finally uses `REMOTE_ADDR` (direct connection)
 4. Defaults to `'bogon'` if no IP found
 
-### Load Balancing
-
-The SDK randomly selects from 3 Treblle endpoints for load balancing:
-- `https://rocknrolla.treblle.com`
-- `https://punisher.treblle.com`
-- `https://sicario.treblle.com`
-
-Each request to Treblle has:
-- **Connection timeout**: 3 seconds
-- **Request timeout**: 3 seconds
-- **SSL verification**: Disabled for flexibility
-- **HTTP errors**: Suppressed (non-blocking)
 
 ## Usage Examples
 
@@ -644,51 +577,21 @@ export TREBLLE_API_KEY="your-project-id"
 export TREBLLE_SDK_TOKEN="your-api-key"
 ```
 
-> See the [docs](https://docs.treblle.com/integrations/php/laravel/) for this SDK to learn more.
+## Getting Help
 
-## Available SDKs
+If you continue to experience issues:
 
-Treblle provides [open-source SDKs](https://docs.treblle.com/en/integrations) that let you seamlessly integrate Treblle with your REST-based APIs.
+1. Enable `debug: true` and check console output
+2. Verify your SDK token and API key are correct in Treblle dashboard
+3. Test with a simple endpoint first
+4. Check [Treblle documentation](https://docs.treblle.com) for the latest updates
+5. Contact support at <https://treblle.com> or email support@treblle.com
 
-- [`treblle-php`](https://github.com/Treblle/treblle-php): SDK for PHP
-- [`treblle-laravel`](https://github.com/Treblle/treblle-laravel): SDK for Laravel
-- [`treblle-symfony`](https://github.com/Treblle/treblle-symfony): SDK for Symfony
-- [`treblle-lumen`](https://github.com/Treblle/treblle-lumen): SDK for Lumen
-- [`treblle-sails`](https://github.com/Treblle/treblle-sails): SDK for Sails
-- [`treblle-adonisjs`](https://github.com/Treblle/treblle-adonisjs): SDK for AdonisJS
-- [`treblle-fastify`](https://github.com/Treblle/treblle-fastify): SDK for Fastify
-- [`treblle-directus`](https://github.com/Treblle/treblle-directus): SDK for Directus
-- [`treblle-strapi`](https://github.com/Treblle/treblle-strapi): SDK for Strapi
-- [`treblle-express`](https://github.com/Treblle/treblle-express): SDK for Express
-- [`treblle-koa`](https://github.com/Treblle/treblle-koa): SDK for Koa
-- [`treblle-go`](https://github.com/Treblle/treblle-go): SDK for Go
-- [`treblle-ruby`](https://github.com/Treblle/treblle-ruby): SDK for Ruby on Rails
-- [`treblle-python`](https://github.com/Treblle/treblle-python): SDK for Python/Django
+## Support
 
-> See the [docs](https://docs.treblle.com/en/integrations) for more on SDKs and Integrations.
+If you have problems of any kind feel free to reach out via <https://treblle.com> or email support@treblle.com and we'll do our best to help you out.
 
-## Community 💙
+## License
 
-First and foremost: **Star and watch this repository** to stay up-to-date.
-
-Also, follow our [Blog](https://blog.treblle.com), and on [Twitter](https://twitter.com/treblleapi).
-
-You can chat with the team and other members on [Discord](https://treblle.com/chat) and follow our tutorials and other video material at [YouTube](https://youtube.com/@treblle).
-
-[![Treblle YouTube](https://img.shields.io/badge/Treblle%20YouTube-Subscribe%20on%20YouTube-F3F5FC?labelColor=c4302b&style=for-the-badge&logo=YouTube&logoColor=F3F5FC&link=https://youtube.com/@treblle)](https://youtube.com/@treblle)
-
-[![Treblle on Twitter](https://img.shields.io/badge/Treblle%20on%20Twitter-Follow%20Us-F3F5FC?labelColor=1DA1F2&style=for-the-badge&logo=Twitter&logoColor=F3F5FC&link=https://twitter.com/treblleapi)](https://twitter.com/treblleapi)
-
-### How to contribute
-
-Here are some ways of contributing to making Treblle better:
-
-- **[Try out Treblle](https://docs.treblle.com/guides/getting-started/)**, and let us know ways to make Treblle better for you.
-- Send a pull request to any of our [open source repositories](https://github.com/Treblle) on Github. Check the contribution guide on the repo you want to contribute to for more details about how to contribute. We're looking forward to your contribution!
-
-### Contributors
-<a href="https://github.com/Treblle/treblle-php/graphs/contributors">
-  <p align="center">
-    <img  src="https://contrib.rocks/image?repo=Treblle/treblle-php" alt="A table of avatars from the project's contributors" />
-  </p>
-</a>
+Copyright 2025, Treblle Inc. Licensed under the MIT license:
+http://www.opensource.org/licenses/mit-license.php
