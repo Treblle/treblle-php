@@ -1,53 +1,59 @@
 {
-  "type": "library",
-  "name": "treblle/treblle-php",
-  "description": "Stay in tune with your APIs",
-  "homepage": "https://treblle.com/",
-  "keywords": [
-    "treblle",
-    "api",
-    "monitoring",
-    "debuging",
-    "documentation",
-    "phpunit"
-  ],
-  "license": "MIT",
-  "authors": [
-    {
-      "name": "Bhushan Gaikwad",
-      "email": "bhushan@treblle.com",
-      "homepage": "https://treblle.com/",
-      "role": "Developer"
+    "name": "treblle/treblle-php",
+    "description": "Runtime Intelligence Platform",
+    "type": "library",
+    "license": "MIT",
+    "homepage": "https://treblle.com/",
+    "keywords": [
+        "treblle",
+        "intelligence",
+        "runtime",
+        "monitoring",
+        "observability",
+        "symfony",
+        "php",
+        "analytics",
+        "governance",
+        "logs"
+    ],
+    "authors": [
+        {
+            "role": "Developer",
+            "name": "Vedran Cindric",
+            "email": "vedran@treblle.com",
+            "homepage": "https://treblle.com/"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "ext-curl": "*",
+        "ext-json": "*",
+        "ext-mbstring": "*",
+        "ext-zlib": "*",
+        "psr/http-message": "^1.1 || ^2.0",
+        "psr/http-server-handler": "^1.0",
+        "psr/http-server-middleware": "^1.0"
     },
-    {
-      "name": "Vedran Cindrić",
-      "email": "vedran@treblle.com",
-      "homepage": "https://treblle.com/",
-      "role": "Developer"
-    }
-  ],
-  "autoload": {
-    "psr-4": {
-      "Treblle\\Php\\": "src/"
-    }
-  },
-  "require": {
-    "php": "^8.2",
-    "ext-mbstring": "*",
-    "guzzlehttp/guzzle": "^7.4.5 || ^8.0 || ^9.0"
-  },
-  "require-dev": {
-    "laravel/pint": "^1.15"
-  },
-  "config": {
-    "preferred-install": "dist",
-    "sort-packages": true
-  },
-  "scripts": {
-    "pint": [
-      "./vendor/bin/pint"
-    ]
-  },
-  "minimum-stability": "stable",
-  "prefer-stable": true
+    "require-dev": {
+        "laravel/pint": "^1.29",
+        "phpstan/phpstan": "^2.2",
+        "phpunit/phpunit": "^11.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Treblle\\Php\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Treblle\\Php\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "analyse": "phpstan analyse",
+        "format": "pint"
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
 }
