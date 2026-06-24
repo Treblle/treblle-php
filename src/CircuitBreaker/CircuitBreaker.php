@@ -11,25 +11,25 @@ use Treblle\Php\CircuitBreaker\Storage\StorageInterface;
 class CircuitBreaker
 {
     // How many consecutive 5xx/network failures before opening the circuit.
-    private const int FAILURE_THRESHOLD = 5;
+    private const FAILURE_THRESHOLD = 5;
 
     // Backoff in seconds for the first open after crossing the threshold.
     // Doubles per failure above threshold, capped at MAX_BACKOFF.
-    private const int BASE_BACKOFF = 30;
-    private const int MAX_BACKOFF = 1800;
+    private const BASE_BACKOFF = 30;
+    private const MAX_BACKOFF = 1800;
 
     // Fallback when the server sends 429 without a Retry-After header.
-    private const int DEFAULT_RETRY_AFTER = 60;
+    private const DEFAULT_RETRY_AFTER = 60;
 
     // How long the half-open probe slot is held. If the probe worker crashes
     // before recording a result the circuit re-allows traffic after this TTL.
-    private const int PROBE_TTL = 10;
+    private const PROBE_TTL = 10;
 
     // TTL slack added to 'until' key to keep it alive through the probe window.
-    private const int UNTIL_TTL_SLACK = 60;
+    private const UNTIL_TTL_SLACK = 60;
 
     // Adds ±JITTER_FACTOR randomisation to backoff to spread recovery probes.
-    private const float JITTER_FACTOR = 0.2;
+    private const JITTER_FACTOR = 0.2;
 
     private readonly string $prefix;
 

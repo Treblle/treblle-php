@@ -6,7 +6,7 @@ namespace Treblle\Php\DataCollector;
 
 class RequestCollector
 {
-    private const int MAX_BODY_BYTES = 2 * 1024 * 1024; // 2MB
+    private const MAX_BODY_BYTES = 2 * 1024 * 1024; // 2MB
 
     private static ?string $overriddenRoutePath = null;
 

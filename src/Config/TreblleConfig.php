@@ -6,12 +6,12 @@ namespace Treblle\Php\Config;
 
 readonly class TreblleConfig
 {
-    public const string INGRESS_URL = 'https://ingress.treblle.com';
-    public const string SDK_NAME = 'php';
-    public const int SDK_VERSION = 60;
+    public const INGRESS_URL = 'https://ingress.treblle.com';
+    public const SDK_NAME = 'php';
+    public const SDK_VERSION = 60;
 
     /** @var string[] */
-    public const array DEFAULT_MASKED_KEYWORDS = [
+    public const DEFAULT_MASKED_KEYWORDS = [
         'password',
         'pwd',
         'secret',

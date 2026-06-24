@@ -6,7 +6,7 @@ namespace Treblle\Php\Filter;
 
 class RequestTypeFilter
 {
-    private const array SKIP_EXTENSIONS = [
+    private const SKIP_EXTENSIONS = [
         '.env', '.css', '.js', '.html', '.htm', '.ico', '.png', '.jpg',
         '.jpeg', '.gif', '.svg', '.woff', '.woff2', '.ttf', '.eot',
         '.pdf', '.txt', '.xml', '.zip', '.gz', '.tar', '.map',

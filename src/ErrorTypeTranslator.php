@@ -6,7 +6,7 @@ namespace Treblle\Php;
 
 class ErrorTypeTranslator
 {
-    private const array MAP = [
+    private const MAP = [
         E_ERROR => 'E_ERROR',
         E_WARNING => 'E_WARNING',
         E_PARSE => 'E_PARSE',

@@ -6,7 +6,7 @@ namespace Treblle\Php\DataCollector;
 
 class ErrorCollector
 {
-    private const int MAX_ERRORS = 25;
+    private const MAX_ERRORS = 25;
 
     /** @var array<int, array{source: string, type: string, message: string, file: string, line: int}> */
     private array $errors = [];
