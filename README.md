@@ -1,597 +1,526 @@
-## Treblle .PHP SDK
-
-[![Latest Version](https://img.shields.io/packagist/v/treblle/treblle-php)](https://packagist.org/packages/treblle/treblle-php)
-![Packagist Downloads](https://img.shields.io/packagist/dt/treblle/treblle-php)
+# Treblle - Runtime Intelligence Platform
 
 [Website](http://treblle.com/) • [Documentation](https://docs.treblle.com/) • [Pricing](https://treblle.com/pricing)
 
-Treblle is an API intelligence platfom that helps developers, teams and organizations understand their APIs from a single integration point.
+Discover, Govern, and Secure APIs, Agents, and AI Across Any Cloud, Gateway or Technology.
 
+## Treblle PHP SDK
+
+[![Latest Version](https://img.shields.io/packagist/v/treblle/treblle-php)](https://packagist.org/packages/treblle/treblle-php)
+[![Total Downloads](https://img.shields.io/packagist/dt/treblle/treblle-php)](https://packagist.org/packages/treblle/treblle-php)
+
+---
 
 ## Requirements
 
-- PHP 8.2 or higher
-- `ext-mbstring` extension (required)
-- `ext-pcntl` extension (optional, for background processing)
-- Composer
+| Dependency  | Version |
+|-------------|---------|
+| PHP         | ^8.2    |
+| ext-curl    | any     |
+| ext-json    | any     |
+| ext-mbstring | any    |
+| ext-zlib    | any     |
 
-
+---
 
 ## Installation
 
-```sh
+```bash
 composer require treblle/treblle-php
 ```
 
-After retrieving your API key and SDK token from the Treblle dashboard, initialize Treblle in your API code:
+---
+
+## Setup
+
+Add one line at the top of your entry point (e.g. `index.php`) before any output:
 
 ```php
 <?php
 
-declare(strict_types=1);
-
-use Treblle\Php\Factory\TreblleFactory;
-
 require_once __DIR__ . '/vendor/autoload.php';
 
-error_reporting(E_ALL);
-ob_start();
+use Treblle\Php\Treblle;
 
-$treblle = TreblleFactory::create(
-    apiKey: $_ENV['TREBLLE_API_KEY'],
-    sdkToken: $_ENV['TREBLLE_SDK_TOKEN']
+Treblle::create(
+    sdkToken: 'your-sdk-token-from-treblle-dashboard',
+    apiKey:   'your-api-key-from-treblle-dashboard',
 );
+
+// Your application code continues here...
 ```
 
-That's it! Your API requests and responses are now being sent to your Treblle dashboard.
+Both credentials are available in your [Treblle Dashboard](https://treblle.com).
+
+That's it. Treblle will automatically capture request and response data and ship it to the ingress asynchronously after your response has been sent.
+
+---
 
 ## Configuration
 
-### Basic Configuration
-
-The SDK can be configured with various options:
+Pass options as the third argument to `Treblle::create()`:
 
 ```php
-use Treblle\Php\Factory\TreblleFactory;
+use Treblle\Php\Treblle;
 
-$treblle = TreblleFactory::create(
-    apiKey: 'your-api-key',
-    sdkToken: 'your-sdk-token',
-    debug: false,  // Enable debug mode for development
-    maskedFields: ['custom_secret', 'internal_token'],  // Additional fields to mask
-    excludedHeaders: ['X-Internal-*', 'X-Debug-Token'],  // Headers to exclude
-    config: []  // Advanced configuration options
-);
-```
-
-### Environment Variables
-
-For production applications, use environment variables:
-
-```bash
-export TREBLLE_API_KEY="your-api-key"
-export TREBLLE_SDK_TOKEN="your-sdk-token"
-```
-
-### Advanced Configuration
-
-You can customize the SDK behavior with advanced configuration options:
-
-```php
-use GuzzleHttp\Client;
-use Treblle\Php\Factory\TreblleFactory;
-
-$treblle = TreblleFactory::create(
-    apiKey: $_ENV['TREBLLE_API_KEY'],
+Treblle::create(
     sdkToken: $_ENV['TREBLLE_SDK_TOKEN'],
-    debug: false,
-    maskedFields: ['password', 'secret_key', 'token'],
-    excludedHeaders: [
-        'X-Internal-*',        // Wildcard: excludes all X-Internal-* headers
-        'X-Debug-Token',       // Exact match: excludes only X-Debug-Token
-        '/^Authorization$/i',  // Regex: case-insensitive Authorization header
+    apiKey:   $_ENV['TREBLLE_API_KEY'],
+    options: [
+        'debug'           => false,
+        'enabled'         => true,
+        'masked_keywords' => [
+            'password', 'pwd', 'secret', 'password_confirmation',
+            'passwordConfirmation', 'cc', 'card_number', 'cardNumber',
+            'ccv', 'ssn', 'credit_score', 'creditScore',
+        ],
+        'excluded_paths'  => [],
+        'custom_ingress'  => null,
     ],
-    config: [
-        'client' => new Client(),  // Custom HTTP client
-        'url' => 'https://custom.endpoint.com',  // Custom Treblle endpoint
-        'fork_process' => extension_loaded('pcntl'),  // Enable background processing
-        'register_handlers' => true,  // Auto-register error handlers (default: true)
-
-        // Custom data providers
-        'server_provider' => null,
-        'language_provider' => null,
-        'request_provider' => null,
-        'response_provider' => null,
-        'error_provider' => null,
-    ]
 );
 ```
 
-## Features
-
-### 1. Automatic Data Collection
-
-The SDK automatically captures and sends:
-
-- **Server Information**: OS, protocol, timezone, software
-- **Request Data**: URL, method, headers, body, query parameters
-- **Response Data**: Status code, headers, body, load time
-- **Language Info**: PHP version and environment
-- **Error Tracking**: Exceptions and PHP errors
-
-### 2. Sensitive Data Masking
-
-Sensitive data is automatically masked before sending to Treblle. Default masked fields include:
-
-- `password`, `pwd`, `secret`, `password_confirmation`
-- `cc`, `card_number`, `ccv`
-- `ssn`, `credit_score`
-
-**Add custom masked fields:**
+Or build a config object directly for more control:
 
 ```php
-$treblle = TreblleFactory::create(
-    apiKey: $_ENV['TREBLLE_API_KEY'],
+use Treblle\Php\Config\TreblleConfig;
+use Treblle\Php\Treblle;
+
+$config = new TreblleConfig(
+    sdkToken:        $_ENV['TREBLLE_SDK_TOKEN'],
+    apiKey:          $_ENV['TREBLLE_API_KEY'],
+    debug:           false,
+    maskedKeywords:  TreblleConfig::DEFAULT_MASKED_KEYWORDS,
+    excludedPaths:   [],
+    customIngress:   null,
+    enabled:         true,
+);
+
+Treblle::start($config);
+```
+
+### `sdkToken`
+
+Your Treblle SDK Token obtained from the Treblle Dashboard.
+
+### `apiKey`
+
+Your Treblle API Key obtained from the Treblle Dashboard.
+
+### `enabled`
+
+Controls whether Treblle is active. Defaults to `true`. Set to `false` to disable the SDK in specific environments without removing your credentials.
+
+```php
+use Treblle\Php\Treblle;
+
+Treblle::create(
     sdkToken: $_ENV['TREBLLE_SDK_TOKEN'],
-    maskedFields: [
-        'api_secret',
-        'internal_token',
-        'private_key',
-    ]
+    apiKey:   $_ENV['TREBLLE_API_KEY'],
+    options: [
+        'enabled' => $_ENV['APP_ENV'] === 'production',
+    ],
 );
 ```
 
-**Automatic masking:**
-The SDK automatically masks sensitive data regardless of configuration:
-- **Authorization headers**: Bearer, Basic, Digest tokens
-- **API key headers**: `x-api-key`, `api-key`
-- **Base64 images**: Replaced with `[image]` placeholder
-- **All masked values**: Replaced with `*****`
+### `debug`
 
-Custom masked fields are merged with defaults, so you don't need to redefine the default fields.
+When `true`, the SDK writes diagnostic messages to the PHP error log prefixed with `[TREBLLE]`. All messages are suppressed by default.
 
-### 3. Header Filtering
-
-Exclude specific headers from being sent to Treblle using pattern matching:
+Useful for:
+- Verifying your credentials are correct
+- Seeing which requests are skipped and why
+- Diagnosing ingress connectivity issues
 
 ```php
-$treblle = TreblleFactory::create(
-    apiKey: $_ENV['TREBLLE_API_KEY'],
-    sdkToken: $_ENV['TREBLLE_SDK_TOKEN'],
-    excludedHeaders: [
-        'X-Internal-*',        // Wildcard: excludes all headers starting with X-Internal-
-        'X-Debug-Token',       // Exact: excludes only this specific header
-        '/^X-(Debug|Test)-/i', // Regex: excludes X-Debug-* and X-Test-* headers
-    ]
-);
+'debug' => true,
 ```
 
-**Matching strategies:**
-- **Exact match**: `"X-Custom-Header"` matches only that specific header (case-insensitive)
-- **Wildcard**: `"X-Internal-*"` matches all headers starting with prefix
-- **Regex**: Patterns wrapped in `/` are treated as regular expressions
+Example debug output:
 
-All header matching is case-insensitive by default.
-
-### 4. Error & Exception Tracking
-
-The SDK automatically captures all PHP errors and exceptions:
-
-- **PHP Errors**: `E_ERROR`, `E_WARNING`, `E_NOTICE`, `E_DEPRECATED`, etc.
-- **Exceptions**: Uncaught exceptions with full stack traces
-- **Shutdown Errors**: Fatal errors caught during PHP shutdown
-
-All error types are automatically translated from integers to readable strings (e.g., `E_WARNING`).
-
-```php
-// Errors are automatically tracked when handlers are registered (default behavior)
-$treblle = TreblleFactory::create(
-    apiKey: $_ENV['TREBLLE_API_KEY'],
-    sdkToken: $_ENV['TREBLLE_SDK_TOKEN'],
-    config: ['register_handlers' => true]  // Default: true
-);
+```
+[TREBLLE] Async: using fastcgi_finish_request
+[TREBLLE] Request excluded by path: /health
+[TREBLLE] Received 4xx from Treblle ingress: 422
+[TREBLLE] curl error: Could not resolve host
 ```
 
-**Disable automatic error handling:**
-```php
-$treblle = TreblleFactory::create(
-    apiKey: $_ENV['TREBLLE_API_KEY'],
-    sdkToken: $_ENV['TREBLLE_SDK_TOKEN'],
-    config: ['register_handlers' => false]
-);
+Debug output goes to wherever PHP's `error_log` is configured - typically your web server error log or a file defined in `php.ini`.
 
-// Manually register handlers if needed
-set_error_handler([$treblle, 'onError']);
-set_exception_handler([$treblle, 'onException']);
-register_shutdown_function([$treblle, 'onShutdown']);
+### `masked_keywords`
+
+Field names to mask in request bodies, response bodies, request headers, and response headers. Masking replaces every character of the value with `*`, preserving the original length, and is applied recursively to nested objects and arrays.
+
+The SDK ships with a sensible default list. You control the list entirely - extend it, replace it, or set it to `[]` to disable masking.
+
+```php
+use Treblle\Php\Config\TreblleConfig;
+
+// Extend the defaults
+'masked_keywords' => array_merge(
+    TreblleConfig::DEFAULT_MASKED_KEYWORDS,
+    ['access_token', 'refresh_token', 'api_secret'],
+),
 ```
 
-### 5. Debug Mode
-
-Enable debug mode during development to see detailed error messages:
-
 ```php
-$treblle = TreblleFactory::create(
-    apiKey: $_ENV['TREBLLE_API_KEY'],
-    sdkToken: $_ENV['TREBLLE_SDK_TOKEN'],
-    debug: true  // Throws exceptions instead of silently failing
-);
+// Disable masking entirely
+'masked_keywords' => [],
 ```
 
-**Debug mode behavior:**
-- **OFF (default)**: SDK errors are silently caught and ignored, ensuring your application continues running
-- **ON**: SDK throws exceptions for easier troubleshooting during development
+The `Authorization` header is masked with scheme-preserving formatting (e.g. `Bearer ****`) when it appears in the keyword list.
 
-**Recommended usage:**
+### `excluded_paths`
+
+Paths that should not be tracked by Treblle. Supports exact matches, wildcards, and regular expressions.
+
 ```php
-$treblle = TreblleFactory::create(
-    apiKey: $_ENV['TREBLLE_API_KEY'],
-    sdkToken: $_ENV['TREBLLE_SDK_TOKEN'],
-    debug: $_ENV['APP_ENV'] === 'development'
-);
+'excluded_paths' => [
+    '/health',          // exact match
+    '/uptime',          // exact match
+    '/status',          // exact match
+    'admin/*',          // wildcard: matches /admin/users, /admin/settings, etc.
+    '/^\/debug\//i',    // regex: matches any path starting with /debug/
+],
 ```
 
-### 6. Background Processing
-
-Improve performance by sending data to Treblle in a background process:
+**Exact match** - the full path must match character for character (case-insensitive):
 
 ```php
-$treblle = TreblleFactory::create(
-    apiKey: $_ENV['TREBLLE_API_KEY'],
-    sdkToken: $_ENV['TREBLLE_SDK_TOKEN'],
-    config: [ 'fork_process' => extension_loaded('pcntl') ]
-);
+'/health'   // matches /health only
 ```
 
-**How it works:**
-- When enabled, the SDK uses `pcntl_fork()` to create a child process
-- The child process sends data to Treblle while the parent continues/exits immediately
-- Falls back to blocking transmission if forking fails
-- Requires the `pcntl` extension (not available on Windows)
-
-**Performance impact:**
-- **With fork**: ~0ms added to response time (non-blocking)
-- **Without fork**: ~3-6ms added to response time (3-second timeout)
-
-**Note**: The `pcntl` extension is typically available on Linux/macOS but not on Windows.
-
-### 7. Custom Data Providers
-
-Override default data providers for custom implementations:
+**Wildcard** - use `*` (any sequence) or `?` (any single character):
 
 ```php
-use Treblle\Php\Contract\RequestDataProvider;
-use Treblle\Php\DataTransferObject\Request;
-use Treblle\Php\Helpers\SensitiveDataMasker;
+'admin/*'   // matches admin/users, admin/settings/edit, etc.
+'api/v?/*'  // matches api/v1/anything, api/v2/anything, etc.
+```
 
-class CustomRequestProvider implements RequestDataProvider
+**Regex** - any string that starts and ends with `/` is treated as a regex:
+
+```php
+'/^\/api\/v\d+\/internal/'   // matches /api/v1/internal, /api/v2/internal, etc.
+```
+
+### `custom_ingress`
+
+Override the default ingress endpoint. Useful for EU-hosted or self-hosted Treblle deployments:
+
+```php
+'custom_ingress' => 'https://ingress-eu.treblle.com',
+```
+
+---
+
+## Endpoint Detection
+
+In plain PHP we are unable to effectively determine the endpoint path for a request. Example for: `articles/12345` the endpoint path would be: `articles/{id}`. This allows us to build a much more accurate representation of how your API works. 
+
+However there are two ways to supply it to us:
+
+### Option 1 - `Treblle::setRoutePath()`
+
+Call this after your router has resolved the route, before the request completes:
+
+```php
+use Treblle\Php\Treblle;
+
+Treblle::setRoutePath('articles/{id}');
+```
+
+Works with any routing library. Example with [nikic/fast-route](https://github.com/nikic/FastRoute):
+
+```php
+$dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) {
+    $r->addRoute('GET', '/v1/articles/{id:\d+}', 'ArticleHandler');
+});
+
+[$status, $handler, $vars] = $dispatcher->dispatch($method, $path);
+
+if ($status === FastRoute\Dispatcher::FOUND) {
+    Treblle::setRoutePath('/v1/articles/{id}');
+}
+```
+
+### Option 2 - `$_SERVER['TREBLLE_ROUTE_PATH']`
+
+Set the server variable anywhere before the shutdown handler runs. Useful when Treblle is initialised in a bootstrap file and the route path is resolved in a different layer:
+
+```php
+$_SERVER['TREBLLE_ROUTE_PATH'] = 'articles/{id}';
+```
+
+You can also set it from `.htaccess` for simple setups where a rewrite rule maps to a known pattern:
+
+```apache
+RewriteRule ^v1/articles/([0-9]+)$ index.php [L,E=TREBLLE_ROUTE_PATH:articles/{id}]
+```
+
+`setRoutePath()` always takes priority over `$_SERVER['TREBLLE_ROUTE_PATH']`.
+
+---
+
+## Enrich Requests With Metadata
+
+Attach custom key/value pairs to any request that will show up on the Treblle dashboard and you can filter/search for requests with specific metadata. 
+
+Note: `user-id` is a reserved keyword for helping us build entire customer dashboards and track customer usage across your API.
+
+```php
+use Treblle\Php\Treblle;
+
+Treblle::metadata([
+    'user-id' => 'john@acmecorp.com',
+    'tenant' => 'acme-corp',
+    'plan' => 'enterprise',
+]);
+```
+
+Call `Treblle::metadata()` anywhere during the request lifecycle - in a middleware, after authentication, inside a controller. Multiple calls are merged together:
+
+```php
+// In an auth middleware
+Treblle::metadata(['user-id' => $user->id, 'role' => $user->role]);
+
+// Later, in a controller
+Treblle::metadata(['feature_flag' => 'new-checkout']);
+```
+
+The final payload will contain both sets of keys:
+
+```json
 {
-    public function __construct(
-        private SensitiveDataMasker $masker,
-        private array $excludedHeaders = []
-    ) {}
-
-    public function getRequest(): Request
-    {
-        // Your custom implementation
-        return new Request(
-            timestamp: gmdate('Y-m-d H:i:s'),
-            url: 'https://api.example.com/endpoint',
-            ip: '192.168.1.1',
-            user_agent: 'Custom Client',
-            method: 'POST',
-            headers: ['Content-Type' => 'application/json'],
-            body: $this->masker->mask(['data' => 'value'])
-        );
+  "data": {
+    "metadata": {
+      "user-id": 42,
+      "role": "admin",
+      "feature_flag": "new-checkout"
     }
-}
-
-$masker = new SensitiveDataMasker(['password', 'secret']);
-$treblle = TreblleFactory::create(
-    apiKey: $_ENV['TREBLLE_API_KEY'],
-    sdkToken: $_ENV['TREBLLE_SDK_TOKEN'],
-    config: [
-        'request_provider' => new CustomRequestProvider($masker, ['X-Internal-*']),
-    ]
-);
-```
-
-**Available provider interfaces:**
-- `ServerDataProvider` - Server/OS information
-- `LanguageDataProvider` - PHP version and runtime
-- `RequestDataProvider` - HTTP request data
-- `ResponseDataProvider` - HTTP response data
-- `ErrorDataProvider` - Error and exception storage
-
-**Default implementations:**
-- `SuperGlobalsServerDataProvider` - Uses `$_SERVER` superglobal
-- `PhpLanguageDataProvider` - Uses `PHP_VERSION` constant
-- `SuperGlobalsRequestDataProvider` - Uses `$_SERVER`, `$_REQUEST`, `getallheaders()`
-- `OutputBufferingResponseDataProvider` - Uses output buffering (`ob_*` functions)
-- `InMemoryErrorDataProvider` - In-memory array storage
-
-## Important Considerations
-
-### Output Buffering
-
-The SDK requires output buffering to capture response data:
-
-```php
-// REQUIRED: Start output buffering before creating Treblle instance
-ob_start();
-
-$treblle = TreblleFactory::create(
-    apiKey: $_ENV['TREBLLE_API_KEY'],
-    sdkToken: $_ENV['TREBLLE_SDK_TOKEN']
-);
-```
-
-**Response limitations:**
-- Responses >= 2MB: Logged as error, empty body sent to Treblle
-- Invalid JSON: Logged as error, empty body sent to Treblle
-- The SDK uses `ob_get_flush()` which both retrieves and flushes the buffer
-
-### Response Data Format
-
-The SDK expects JSON responses. If your API returns JSON:
-- Response body will be decoded and masked automatically
-- Non-JSON responses will result in an empty body being sent
-
-### IP Detection
-
-The SDK automatically detects client IP addresses with proxy support:
-1. Checks `HTTP_CLIENT_IP` first
-2. Falls back to `HTTP_X_FORWARDED_FOR` (for proxied requests)
-3. Finally uses `REMOTE_ADDR` (direct connection)
-4. Defaults to `'bogon'` if no IP found
-
-
-## Usage Examples
-
-### Basic PHP Application
-
-```php
-<?php
-
-declare(strict_types=1);
-
-use Treblle\Php\Factory\TreblleFactory;
-
-require_once __DIR__ . '/vendor/autoload.php';
-
-// IMPORTANT: Start output buffering before Treblle initialization
-ob_start();
-
-// Initialize Treblle
-$treblle = TreblleFactory::create(
-    apiKey: $_ENV['TREBLLE_API_KEY'],
-    sdkToken: $_ENV['TREBLLE_SDK_TOKEN']
-);
-
-// Your API logic
-header('Content-Type: application/json');
-echo json_encode(['message' => 'Hello, World!']);
-
-// Output buffering will be captured automatically on shutdown
-```
-
-### Production Configuration
-
-```php
-<?php
-
-declare(strict_types=1);
-
-use Treblle\Php\Factory\TreblleFactory;
-
-require_once __DIR__ . '/vendor/autoload.php';
-
-ob_start();
-
-$treblle = TreblleFactory::create(
-    apiKey: $_ENV['TREBLLE_API_KEY'],
-    sdkToken: $_ENV['TREBLLE_SDK_TOKEN'],
-    debug: false,  // Silent failures in production
-    maskedFields: [
-        'internal_token',
-        'private_data',
-        'admin_password',
-        'api_secret',
-    ],
-    excludedHeaders: [
-        'X-Internal-*',    // Exclude internal headers
-        'X-Debug-*',       // Exclude debug headers
-    ],
-    config: [
-        'fork_process' => extension_loaded('pcntl'),  // Non-blocking on Linux/macOS
-    ]
-);
-
-// Your application code
-header('Content-Type: application/json');
-$data = ['users' => [...], 'meta' => [...]];
-echo json_encode($data);
-```
-
-### Development Configuration
-
-```php
-<?php
-
-declare(strict_types=1);
-
-use Treblle\Php\Factory\TreblleFactory;
-
-require_once __DIR__ . '/vendor/autoload.php';
-
-ob_start();
-
-$treblle = TreblleFactory::create(
-    apiKey: $_ENV['TREBLLE_API_KEY'],
-    sdkToken: $_ENV['TREBLLE_SDK_TOKEN'],
-    debug: true,  // Throw exceptions for easier debugging
-    maskedFields: ['password', 'secret'],  // Minimal masking for debugging
-    config: [
-        'fork_process' => false,  // Blocking mode for easier debugging
-    ]
-);
-
-// Your application code
-```
-
-### Conditional Configuration
-
-```php
-<?php
-
-use Treblle\Php\Factory\TreblleFactory;
-
-$isProduction = $_ENV['APP_ENV'] === 'production';
-
-$treblle = TreblleFactory::create(
-    apiKey: $_ENV['TREBLLE_API_KEY'],
-    sdkToken: $_ENV['TREBLLE_SDK_TOKEN'],
-    debug: !$isProduction,  // Debug only in non-production
-    maskedFields: $isProduction
-        ? ['password', 'secret', 'internal_token', 'private_key']
-        : ['password', 'secret'],
-    excludedHeaders: $isProduction
-        ? ['X-Internal-*', 'X-Debug-*']
-        : [],
-    config: [
-        'fork_process' => $isProduction && extension_loaded('pcntl'),
-    ]
-);
-```
-
-## Troubleshooting
-
-### Output Buffering Not Enabled
-
-**Error:** `RuntimeException: Output buffering must be enabled to collect responses. Have you called 'ob_start()'?`
-
-**Solution:** Call `ob_start()` before creating the Treblle instance:
-```php
-ob_start();  // Add this line
-$treblle = TreblleFactory::create(...);
-```
-
-### No Data Appearing in Dashboard
-
-1. **Check API credentials:**
-   ```php
-   var_dump($_ENV['TREBLLE_API_KEY'], $_ENV['TREBLLE_SDK_TOKEN']);
-   ```
-
-2. **Enable debug mode to see errors:**
-   ```php
-   $treblle = TreblleFactory::create(
-       apiKey: $_ENV['TREBLLE_API_KEY'],
-       sdkToken: $_ENV['TREBLLE_SDK_TOKEN'],
-       debug: true  // Will throw exceptions if something fails
-   );
-   ```
-
-3. **Check if handlers are registered:**
-   ```php
-   $treblle = TreblleFactory::create(
-       apiKey: $_ENV['TREBLLE_API_KEY'],
-       sdkToken: $_ENV['TREBLLE_SDK_TOKEN'],
-       config: ['register_handlers' => true]  // Should be true (default)
-   );
-   ```
-
-### Response Body Empty
-
-**Possible causes:**
-- Response size >= 2MB (check your response size)
-- Invalid JSON in response (check JSON encoding)
-- Output buffering not capturing response (ensure `ob_start()` is called early)
-
-**Solution:** Check error logs when debug mode is enabled.
-
-### Fork Process Not Working
-
-**Issue:** Background processing not working on your system.
-
-**Check if pcntl is available:**
-```php
-if (extension_loaded('pcntl')) {
-    echo "PCNTL available";
-} else {
-    echo "PCNTL not available - will use blocking mode";
+  }
 }
 ```
 
-**Note:** The `pcntl` extension is not available on Windows. The SDK will automatically fall back to blocking mode.
+Metadata values can be any JSON-serializable type: strings, integers, booleans, or nested arrays.
 
-### Custom Headers Not Being Excluded
+In persistent runtimes (Swoole, RoadRunner, FrankenPHP), call `Treblle::reset()` at the start of each request cycle to clear metadata from the previous request alongside all other request state.
 
-**Issue:** Headers still appearing in Treblle despite being in `excludedHeaders`.
+---
 
-**Solution:** Check pattern syntax:
+## PSR-15 Middleware
+
+If your application uses a PSR-15 compatible framework (Slim, Mezzio, Laravel via `league/route`, etc.) you can use `TreblleMiddleware` instead of `Treblle::create()`. The middleware integrates directly into the PSR-15 stack, reads request and response data from the PSR-7 objects (no output buffering), and ships the payload asynchronously via a shutdown function after the response has been delivered.
+
 ```php
-excludedHeaders: [
-    'X-Debug-Token',      // Exact match (case-insensitive)
-    'X-Internal-*',       // Wildcard pattern
-    '/^Authorization$/i'  // Regex pattern (wrapped in /)
-]
+use Treblle\Php\Middleware\TreblleMiddleware;
+
+$middleware = TreblleMiddleware::create(
+    sdkToken: $_ENV['TREBLLE_SDK_TOKEN'],
+    apiKey:   $_ENV['TREBLLE_API_KEY'],
+);
+
+// Slim 4
+$app->add($middleware);
+
+// Mezzio / Laminas
+$app->pipe($middleware);
 ```
 
-## Migration Guide (v4.x to v5.x)
+Register it as the **outermost** middleware so it wraps the full request/response cycle and captures all headers and the complete response body.
 
-Version 5.0 introduces breaking changes to parameter naming for better clarity:
+All options from `Treblle::create()` are supported as the third argument:
 
-### What Changed
-
-- **Parameter names renamed**:
-  - `projectId` → `apiKey` (env: `TREBLLE_PROJECT_ID` → `TREBLLE_API_KEY`)
-  - `apiKey` → `sdkToken` (env: `TREBLLE_API_KEY` → `TREBLLE_SDK_TOKEN`)
-
-### Migration Steps
-
-**Before (v4.x):**
 ```php
-$treblle = TreblleFactory::create(
-    apiKey: 'your-api-key',
-    projectId: 'your-project-id'
+$middleware = TreblleMiddleware::create(
+    sdkToken: $_ENV['TREBLLE_SDK_TOKEN'],
+    apiKey:   $_ENV['TREBLLE_API_KEY'],
+    options: [
+        'enabled'         => $_ENV['APP_ENV'] === 'production',
+        'masked_keywords' => array_merge(TreblleConfig::DEFAULT_MASKED_KEYWORDS, ['access_token']),
+        'excluded_paths'  => ['/health', '/metrics'],
+    ],
 );
 ```
 
-**After (v5.x):**
+Or construct with a config object directly:
+
 ```php
-$treblle = TreblleFactory::create(
-    apiKey: 'your-project-id',  // This is now your API key
-    sdkToken: 'your-api-key'    // This is now your SDK token
-);
+use Treblle\Php\Config\TreblleConfig;
+use Treblle\Php\Middleware\TreblleMiddleware;
+
+$middleware = new TreblleMiddleware(new TreblleConfig(
+    sdkToken: $_ENV['TREBLLE_SDK_TOKEN'],
+    apiKey:   $_ENV['TREBLLE_API_KEY'],
+));
 ```
 
-**Environment Variables:**
+### Route path in PSR-15
+
+Supply the parameterised route pattern via a PSR-7 request attribute named `_treblle_route_path`. Most routers let you set attributes on the request object before calling the handler:
+
+```php
+$request = $request->withAttribute('_treblle_route_path', 'articles/{id}');
+```
+
+`Treblle::setRoutePath()` also works from inside the handler if you prefer that approach.
+
+### Metadata in PSR-15
+
+`Treblle::metadata()` works the same way - call it anywhere inside the handler or its downstream middleware:
+
+```php
+public function handle(ServerRequestInterface $request): ResponseInterface
+{
+    $user = $this->auth->authenticate($request);
+    Treblle::metadata(['user_id' => $user->id, 'plan' => $user->plan]);
+
+    // ... handle request ...
+}
+```
+
+---
+
+## Async Mode
+
+The SDK sends data to Treblle after your response has been delivered, using the first available strategy:
+
+1. **`fastcgi_finish_request()`** (PHP-FPM) - flushes the HTTP response to the client and continues running in the background. The Treblle call is completely invisible to your end users. This is the default in most production PHP deployments.
+
+2. **`pcntl_fork()`** (Linux/Unix CLI and FPM where `pcntl` is available) - forks a child process to send the data. The parent process returns immediately.
+
+3. **Sync fallback** - if neither of the above is available, the data is sent synchronously after the response is flushed. This adds network latency to your shutdown phase but does not affect the response your users receive.
+
+No configuration is required. The SDK detects the environment at runtime and picks the best available strategy.
+
+---
+
+## Migrating from v5 to v6
+
+### 1. Update the package
+
 ```bash
-# Before (v4.x)
-export TREBLLE_API_KEY="your-api-key"
-export TREBLLE_PROJECT_ID="your-project-id"
-
-# After (v5.x)
-export TREBLLE_API_KEY="your-project-id"
-export TREBLLE_SDK_TOKEN="your-api-key"
+composer require treblle/treblle-php:^6.0
 ```
 
-## Getting Help
+### 2. Remove the Guzzle dependency
 
-If you continue to experience issues:
+v6 uses native PHP curl - Guzzle is no longer required. If your project only pulled it in for Treblle, you can remove it:
 
-1. Enable `debug: true` and check console output
-2. Verify your SDK token and API key are correct in Treblle dashboard
-3. Test with a simple endpoint first
-4. Check [Treblle documentation](https://docs.treblle.com) for the latest updates
-5. Contact support at <https://treblle.com> or email support@treblle.com
+```bash
+composer remove guzzlehttp/guzzle
+```
 
-## Support
+If other packages in your project depend on Guzzle, leave it - removing it won't break anything, it's simply no longer used by this SDK.
 
-If you have problems of any kind feel free to reach out via <https://treblle.com> or email support@treblle.com and we'll do our best to help you out.
+### 3. Replace `TreblleFactory::create()` with `Treblle::create()`
+
+The factory class is gone. Initialisation now goes through `Treblle::create()` directly.
+
+**Before (v5):**
+
+```php
+use Treblle\Php\Factory\TreblleFactory;
+
+TreblleFactory::create(
+    apiKey:   'your-api-key',
+    sdkToken: 'your-sdk-token',
+);
+```
+
+**After (v6):**
+
+```php
+use Treblle\Php\Treblle;
+
+Treblle::create(
+    sdkToken: 'your-sdk-token',
+    apiKey:   'your-api-key',
+);
+```
+
+Note that the parameter order is reversed - `sdkToken` is now first.
+
+### 4. Update renamed and moved options
+
+| v5 | v6 | Notes |
+|---|---|---|
+| `$maskedFields` (3rd positional arg) | `options['masked_keywords']` | Renamed; now controls the full list, not just additions |
+| `$excludedHeaders` (4th positional arg) | _(removed)_ | See below |
+| `$config['url']` | `options['custom_ingress']` | Renamed |
+| `$config['fork_process']` | _(removed)_ | Async is now automatic |
+| `$config['register_handlers']` | _(removed)_ | Handlers are always registered |
+| _(new)_ | `options['enabled']` | Global on/off switch |
+
+**Full before/after example:**
+
+```php
+// Before (v5)
+use Treblle\Php\Factory\TreblleFactory;
+
+TreblleFactory::create(
+    apiKey:          'your-api-key',
+    sdkToken:        'your-sdk-token',
+    debug:           false,
+    maskedFields:    ['access_token', 'refresh_token'],
+    excludedHeaders: ['X-Internal-Header'],
+    config: [
+        'url'          => 'https://ingress-eu.treblle.com',
+        'fork_process' => true,
+    ],
+);
+```
+
+```php
+// After (v6)
+use Treblle\Php\Treblle;
+
+Treblle::create(
+    sdkToken: 'your-sdk-token',
+    apiKey:   'your-api-key',
+    options: [
+        'debug'           => false,
+        'masked_keywords' => ['password', 'pwd', 'secret', 'access_token', 'refresh_token'],
+        'custom_ingress'  => 'https://ingress-eu.treblle.com',
+    ],
+);
+```
+
+### 5. Review `maskedFields` vs `masked_keywords`
+
+In v5, `$maskedFields` was **additive** - the SDK merged your list with its own defaults.
+
+In v6, `masked_keywords` is the **full list**. If you pass a value, it replaces the defaults entirely. To extend the defaults, merge them explicitly:
+
+```php
+use Treblle\Php\Config\TreblleConfig;
+use Treblle\Php\Treblle;
+
+Treblle::create(
+    sdkToken: 'your-sdk-token',
+    apiKey:   'your-api-key',
+    options: [
+        'masked_keywords' => array_merge(
+            TreblleConfig::DEFAULT_MASKED_KEYWORDS,
+            ['access_token', 'refresh_token'],
+        ),
+    ],
+);
+```
+
+### 6. `excludedHeaders` is removed
+
+v5's `$excludedHeaders` excluded header **names** from being sent to Treblle at all. v6 does not have this option. Instead:
+
+- To hide the **value** of a sensitive header, add its name to `masked_keywords` - the value will be replaced with `*` characters.
+
+### 7. Async is now automatic
+
+In v5, background sending required explicitly setting `config['fork_process' => true]` and having the `pcntl` extension available.
+
+In v6, the SDK automatically uses the best available async strategy at runtime - `fastcgi_finish_request()` in PHP-FPM environments, `pcntl_fork()` on Unix where available, and a sync fallback otherwise. No configuration needed.
+
+---
 
 ## License
 
-Copyright 2025, Treblle Inc. Licensed under the MIT license:
-http://www.opensource.org/licenses/mit-license.php
+The MIT License (MIT). See [LICENSE](LICENSE) for details.
